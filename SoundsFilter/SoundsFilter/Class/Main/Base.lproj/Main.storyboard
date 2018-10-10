@@ -83,6 +83,38 @@
             </objects>
             <point key="canvasLocation" x="630" y="687"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="nL4-Hr-dLV">
+            <objects>
+                <navigationController id="HzS-fI-b0m" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Dem-Oi-QHn">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="wVC-Xk-y8U" kind="relationship" relationship="rootViewController" id="LKo-1l-wcA"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mB2-S2-Hdd" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-210" y="1434"/>
+        </scene>
+        <!--编辑-->
+        <scene sceneID="s6w-g7-jYL">
+            <objects>
+                <viewController storyboardIdentifier="EditViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="wVC-Xk-y8U" customClass="EditViewController" customModule="SoundsFilter" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="2Jc-Za-hKw">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="qBX-Sh-sCB"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="编辑" id="PuL-Cm-WTg"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iyy-vS-x3T" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="630" y="1433"/>
+        </scene>
     </scenes>
     <resources>
         <image name="add" width="67" height="67"/>

@@ -17,8 +17,9 @@
 		7CFB8DA6216DA851006A6365 /* ExtensionForSomeClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFB8DA2216DA851006A6365 /* ExtensionForSomeClass.swift */; };
 		7CFB8DA7216DA851006A6365 /* ToolClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFB8DA3216DA851006A6365 /* ToolClass.swift */; };
 		7CFB8DA8216DA851006A6365 /* BasicKnowledge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFB8DA4216DA851006A6365 /* BasicKnowledge.swift */; };
-		7CFB8DAF216DAE5F006A6365 /* ImageNameStandard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFB8DAE216DAE5F006A6365 /* ImageNameStandard.swift */; };
 		7CFB8DB2216DDA0C006A6365 /* RecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFB8DB1216DDA0C006A6365 /* RecordViewController.swift */; };
+		7CFB8DB5216E02C2006A6365 /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFB8DB4216E02C2006A6365 /* EditViewController.swift */; };
+		7CFB8DB7216E183E006A6365 /* StaticProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFB8DB6216E183E006A6365 /* StaticProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,8 +36,9 @@
 		7CFB8DA3216DA851006A6365 /* ToolClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolClass.swift; sourceTree = "<group>"; };
 		7CFB8DA4216DA851006A6365 /* BasicKnowledge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicKnowledge.swift; sourceTree = "<group>"; };
 		7CFB8DAB216DA9C6006A6365 /* SoundsFilter-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SoundsFilter-Bridging-Header.h"; sourceTree = "<group>"; };
-		7CFB8DAE216DAE5F006A6365 /* ImageNameStandard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageNameStandard.swift; sourceTree = "<group>"; };
 		7CFB8DB1216DDA0C006A6365 /* RecordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordViewController.swift; sourceTree = "<group>"; };
+		7CFB8DB4216E02C2006A6365 /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
+		7CFB8DB6216E183E006A6365 /* StaticProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticProperties.swift; sourceTree = "<group>"; };
 		9237D5DCC208E83F9A3EAB3F /* Pods-SoundsFilter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SoundsFilter.debug.xcconfig"; path = "Target Support Files/Pods-SoundsFilter/Pods-SoundsFilter.debug.xcconfig"; sourceTree = "<group>"; };
 		A5D200754E34FFAC3001F70A /* Pods-SoundsFilter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SoundsFilter.release.xcconfig"; path = "Target Support Files/Pods-SoundsFilter/Pods-SoundsFilter.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -118,7 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				7CFB8D98216DA851006A6365 /* FrameStandard.swift */,
-				7CFB8DAE216DAE5F006A6365 /* ImageNameStandard.swift */,
+				7CFB8DB6216E183E006A6365 /* StaticProperties.swift */,
 			);
 			path = AppStandard;
 			sourceTree = "<group>";
@@ -174,6 +176,7 @@
 			children = (
 				7CFB8DA0216DA851006A6365 /* HomeVC */,
 				7CFB8DB0216DD9EA006A6365 /* RecordVC */,
+				7CFB8DB3216E0278006A6365 /* EditVC */,
 			);
 			path = Transaction;
 			sourceTree = "<group>";
@@ -210,6 +213,14 @@
 				7CFB8DB1216DDA0C006A6365 /* RecordViewController.swift */,
 			);
 			path = RecordVC;
+			sourceTree = "<group>";
+		};
+		7CFB8DB3216E0278006A6365 /* EditVC */ = {
+			isa = PBXGroup;
+			children = (
+				7CFB8DB4216E02C2006A6365 /* EditViewController.swift */,
+			);
+			path = EditVC;
 			sourceTree = "<group>";
 		};
 		B58CE6E92DD3BD98226AB4C3 /* Frameworks */ = {
@@ -353,14 +364,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7CFB8DAF216DAE5F006A6365 /* ImageNameStandard.swift in Sources */,
 				7CFB8DA6216DA851006A6365 /* ExtensionForSomeClass.swift in Sources */,
+				7CFB8DB7216E183E006A6365 /* StaticProperties.swift in Sources */,
 				7CFB8DA5216DA851006A6365 /* FrameStandard.swift in Sources */,
 				7CFB8DB2216DDA0C006A6365 /* RecordViewController.swift in Sources */,
 				7CFB8D6F216DA3AC006A6365 /* ViewController.swift in Sources */,
 				7CFB8D6D216DA3AC006A6365 /* AppDelegate.swift in Sources */,
 				7CFB8DA7216DA851006A6365 /* ToolClass.swift in Sources */,
 				7CFB8DA8216DA851006A6365 /* BasicKnowledge.swift in Sources */,
+				7CFB8DB5216E02C2006A6365 /* EditViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
