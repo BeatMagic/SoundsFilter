@@ -9,13 +9,11 @@
 import UIKit
 
 class FrameStandard: NSObject {
-    /// 边框宽集合
-    enum KeyBorderWidthAggregate: CGFloat {
-        case normal = 1.5
-    }
+    /// 按钮通用宽高
+    static let genericButtonSideLength: CGFloat = 60
     
-    /// 拍摄按钮宽高
-    static let recordVideoButtonSideLength: CGFloat = 60
+    /// 按钮通用Y
+    static let genericButtonY: CGFloat = (ToolClass.getScreenHeight() - FrameStandard.genericButtonSideLength) / 4 * 3
     
     
 }
