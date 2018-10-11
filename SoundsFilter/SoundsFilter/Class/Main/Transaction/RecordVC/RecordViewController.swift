@@ -183,10 +183,19 @@ extension RecordViewController {
             self.recordButton.setImage(UIImage.init(named: StaticProperties.ImageName.stopped.rawValue), for: .normal)
             self.recordTitleLabel.text = "停止"
             
+            // 创建计时器并开始计时
+            GlobalTimer.delegate = self
+            GlobalTimer.initializeTimer(timeInterval: 0.1)
+            
+            
+            
         case .Recording:
             self.recordStatus = .Initial
             self.recordButton.setImage(UIImage.init(named: StaticProperties.ImageName.record.rawValue), for: .normal)
             self.recordTitleLabel.text = "录制"
+            
+            // 销毁计时器
+            GlobalTimer.destroyTimer()
             
             // 页面跳转
             let editViewController = UIViewController.initVControllerFromStoryboard("EditViewController")
@@ -197,4 +206,19 @@ extension RecordViewController {
         
         
     }// funcEnd
+}
+
+extension RecordViewController: TimerDelegate {
+    func doThingsWhenTiming() {
+        print("当前时间\(GlobalTimer.getRepeatCount() - 1)")
+        
+    }
+    
+    func doThingsWhenEnd() {
+        print("已经结束")
+        self.clickRecordButtonEvent()
+        
+    }
+    
+    
 }
