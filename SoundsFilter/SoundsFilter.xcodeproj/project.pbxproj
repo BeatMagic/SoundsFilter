@@ -20,6 +20,8 @@
 		7CFB8DB2216DDA0C006A6365 /* RecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFB8DB1216DDA0C006A6365 /* RecordViewController.swift */; };
 		7CFB8DB5216E02C2006A6365 /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFB8DB4216E02C2006A6365 /* EditViewController.swift */; };
 		7CFB8DB7216E183E006A6365 /* StaticProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFB8DB6216E183E006A6365 /* StaticProperties.swift */; };
+		7CFED162216EE6DE009FD60B /* SizeSlideButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFED161216EE6DD009FD60B /* SizeSlideButton.swift */; };
+		7CFED164216EF148009FD60B /* GlobalMusicProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFED163216EF148009FD60B /* GlobalMusicProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +41,8 @@
 		7CFB8DB1216DDA0C006A6365 /* RecordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordViewController.swift; sourceTree = "<group>"; };
 		7CFB8DB4216E02C2006A6365 /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
 		7CFB8DB6216E183E006A6365 /* StaticProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticProperties.swift; sourceTree = "<group>"; };
+		7CFED161216EE6DD009FD60B /* SizeSlideButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeSlideButton.swift; sourceTree = "<group>"; };
+		7CFED163216EF148009FD60B /* GlobalMusicProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalMusicProperties.swift; sourceTree = "<group>"; };
 		9237D5DCC208E83F9A3EAB3F /* Pods-SoundsFilter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SoundsFilter.debug.xcconfig"; path = "Target Support Files/Pods-SoundsFilter/Pods-SoundsFilter.debug.xcconfig"; sourceTree = "<group>"; };
 		A5D200754E34FFAC3001F70A /* Pods-SoundsFilter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SoundsFilter.release.xcconfig"; path = "Target Support Files/Pods-SoundsFilter/Pods-SoundsFilter.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -135,6 +139,7 @@
 		7CFB8D9A216DA851006A6365 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				7CFED163216EF148009FD60B /* GlobalMusicProperties.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -142,8 +147,8 @@
 		7CFB8D9B216DA851006A6365 /* BasicClass */ = {
 			isa = PBXGroup;
 			children = (
-				7CFB8D9C216DA851006A6365 /* Other */,
 				7CFB8D9D216DA851006A6365 /* View */,
+				7CFB8D9C216DA851006A6365 /* Other */,
 			);
 			path = BasicClass;
 			sourceTree = "<group>";
@@ -158,6 +163,7 @@
 		7CFB8D9D216DA851006A6365 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				7CFED161216EE6DD009FD60B /* SizeSlideButton.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -364,10 +370,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7CFED162216EE6DE009FD60B /* SizeSlideButton.swift in Sources */,
 				7CFB8DA6216DA851006A6365 /* ExtensionForSomeClass.swift in Sources */,
 				7CFB8DB7216E183E006A6365 /* StaticProperties.swift in Sources */,
 				7CFB8DA5216DA851006A6365 /* FrameStandard.swift in Sources */,
 				7CFB8DB2216DDA0C006A6365 /* RecordViewController.swift in Sources */,
+				7CFED164216EF148009FD60B /* GlobalMusicProperties.swift in Sources */,
 				7CFB8D6F216DA3AC006A6365 /* ViewController.swift in Sources */,
 				7CFB8D6D216DA3AC006A6365 /* AppDelegate.swift in Sources */,
 				7CFB8DA7216DA851006A6365 /* ToolClass.swift in Sources */,

@@ -14,7 +14,45 @@ class RecordViewController: UIViewController {
     /// 是否在记录中
     var recordStatus: StaticProperties.RecordVCStatus = .Initial
     
+    /// 是否可以更改BPM
+    var canChangeBPM: Bool = false
+
+    
 // MARK: - UI
+    /// 调整BPM按钮
+    private lazy var changeBPMButton: SizeSlideButton = {
+        let sideLength = FrameStandard.genericButtonSideLength / 2
+        
+        let tmpButton = SizeSlideButton.init(condensedFrame:
+            CGRect.init(x: (ToolClass.getScreenWidth() - sideLength ) / 2,
+                        y: ToolClass.getScreenHeight() / 5 * 4 - sideLength * 3,
+                        width: sideLength,
+                        height: sideLength)
+        )
+        
+        let wholeWidth = ToolClass.getScreenWidth() / 2 - sideLength
+
+        tmpButton.frame = CGRect.init(
+            x: ToolClass.getScreenWidth() / 2 - wholeWidth + sideLength / 2,
+            y: ToolClass.getScreenHeight() / 5 * 4 - sideLength * 3,
+            width: wholeWidth,
+            height: sideLength
+        )
+        
+        tmpButton.trackColor = UIColor.flatGray
+        tmpButton.handle.color = UIColor.flatRed
+        
+        tmpButton.addTarget(self, action: #selector(self.touchDownChangeBPMButtonEvent), for: .touchDown)
+        tmpButton.addTarget(self, action: #selector(self.valueChangedChangeBPMButtonEvent), for: .valueChanged)
+        tmpButton.addTarget(self, action: #selector(self.touchDragFinishedChangeBPMButtonEvent), for: .touchDragFinished)
+        
+        self.view.addSubview(tmpButton)
+        
+        return tmpButton
+    }()
+
+    
+    
     /// 录制按钮
     private lazy var recordButton: UIButton = {
         let tmpButton = UIButton.init(frame:
@@ -90,18 +128,20 @@ class RecordViewController: UIViewController {
 // MARK: - 设置函数封装
 extension RecordViewController {
     func setData() -> Void {
-        self.navigationItem.leftBarButtonItem = self.backButtonItem
+        self.changeBPMButton.tag = 2
         self.recordButton.tag = 1
         self.recordTitleLabel.text = "录制"
     }
     
     func setUI() -> Void {
+        self.navigationItem.leftBarButtonItem = self.backButtonItem
         
     }
 }
 
 // MARK: - 点击事件
 extension RecordViewController {
+    // MARK: 导航栏
     /// 点击返回
     @objc func clickBackButtonEvent() -> Void {
         self.dismiss(animated: true) {
@@ -109,6 +149,31 @@ extension RecordViewController {
         
     }// funcEnd
     
+    // MARK: BPM按钮
+    /// 长按BPM按钮
+    @objc func touchDownChangeBPMButtonEvent() -> Void {
+        if self.recordStatus != .Recording {
+            self.canChangeBPM = true
+            
+        }
+    }
+    
+    /// 滑动BPM按钮
+    @objc func valueChangedChangeBPMButtonEvent(_ sender: SizeSlideButton) -> Void {
+        if self.canChangeBPM == true {
+            let value = sender.value
+            GlobalMusicProperties.musicBPM = Double(value * 80 + 120)
+            
+            print(value)
+        }
+    }
+    
+    /// 结束点击BPM按钮
+    @objc func touchDragFinishedChangeBPMButtonEvent() -> Void {
+        self.canChangeBPM = false
+    }
+    
+    // MARK: 录制按钮
     /// 点击记录/停止
     @objc func clickRecordButtonEvent() -> Void {
         switch self.recordStatus {
