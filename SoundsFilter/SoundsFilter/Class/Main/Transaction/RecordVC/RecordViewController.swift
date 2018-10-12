@@ -10,7 +10,7 @@ import UIKit
 import ChameleonFramework
 
 class RecordViewController: UIViewController {
-// MARK: - 状态属性
+    // MARK: - 状态属性
     /// 是否在记录中
     var recordStatus: StaticProperties.RecordVCStatus = .Initial
     
@@ -18,7 +18,7 @@ class RecordViewController: UIViewController {
     var canChangeBPM: Bool = false
 
     
-// MARK: - UI
+    // MARK: - UI
     /// 调整BPM按钮
     private lazy var changeBPMButton: SizeSlideButton = {
         let sideLength = FrameStandard.genericButtonSideLength / 2
@@ -51,7 +51,26 @@ class RecordViewController: UIViewController {
         return tmpButton
     }()
 
-    
+    /// BPM数值Label
+    private lazy var bPMCountLabel: UILabel = {
+        let width = FrameStandard.genericButtonSideLength
+        let height = width / 4
+        
+        let tmpLabel = UILabel.init(frame: CGRect.init(x: 0,
+                                                       y: 0,
+                                                       width: width,
+                                                       height: height))
+        tmpLabel.center = CGPoint.init(x: ToolClass.getScreenWidth() / 2 + width,
+                                       y: ToolClass.getScreenHeight() / 5 * 4 - width / 2 * 3 + height)
+        
+        tmpLabel.font = UIFont.systemFont(ofSize: 11)
+        tmpLabel.text = "BPM:\(GlobalMusicProperties.musicBPM)"
+        tmpLabel.textColor = UIColor.flatGrayDark
+        
+        self.view.addSubview(tmpLabel)
+        
+        return tmpLabel
+    }()
     
     /// 录制按钮
     private lazy var recordButton: UIButton = {
@@ -131,6 +150,7 @@ extension RecordViewController {
         self.changeBPMButton.tag = 2
         self.recordButton.tag = 1
         self.recordTitleLabel.text = "录制"
+        self.bPMCountLabel.tag = 1
     }
     
     func setUI() -> Void {
@@ -162,9 +182,10 @@ extension RecordViewController {
     @objc func valueChangedChangeBPMButtonEvent(_ sender: SizeSlideButton) -> Void {
         if self.canChangeBPM == true {
             let value = sender.value
-            GlobalMusicProperties.musicBPM = Double(value * 80 + 120)
+            let roundingBPM = lroundf(value * 80 + 60)
+            GlobalMusicProperties.musicBPM = Double(roundingBPM)
             
-            print(value)
+            self.bPMCountLabel.text = "BPM:\(GlobalMusicProperties.musicBPM)"
         }
     }
     
@@ -187,6 +208,9 @@ extension RecordViewController {
             GlobalTimer.delegate = self
             GlobalTimer.initializeTimer(timeInterval: 0.1)
             
+            // 初始化AudioKit
+            AudioKitLogger.initializeLogger()
+            
             
             
         case .Recording:
@@ -194,8 +218,9 @@ extension RecordViewController {
             self.recordButton.setImage(UIImage.init(named: StaticProperties.ImageName.record.rawValue), for: .normal)
             self.recordTitleLabel.text = "录制"
             
-            // 销毁计时器
+            // 销毁计时器与AudioKit
             GlobalTimer.destroyTimer()
+            AudioKitLogger.destroyLogger()
             
             // 页面跳转
             let editViewController = UIViewController.initVControllerFromStoryboard("EditViewController")
@@ -210,15 +235,17 @@ extension RecordViewController {
 
 extension RecordViewController: TimerDelegate {
     func doThingsWhenTiming() {
-        print("当前时间\(GlobalTimer.getRepeatCount() - 1)")
+        GlobalMusicProperties.recordFrequencyArray.append(AudioKitLogger.getRealtimeNote())
         
     }
     
     func doThingsWhenEnd() {
         print("已经结束")
-        self.clickRecordButtonEvent()
         
+        if self.recordStatus == .Recording {
+            self.clickRecordButtonEvent()
+            
+        }
+
     }
-    
-    
 }
