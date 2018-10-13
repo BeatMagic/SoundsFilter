@@ -27,7 +27,7 @@ class PlayProgressBar: UIView {
     }
     
     /// 左右括号数组
-    private var bracketsViewArray: [UIView]! {
+    private var bracketsViewArray: [UILabel]! {
         didSet {
             for bracketsView in bracketsViewArray {
                 self.addSubview(bracketsView)
@@ -37,6 +37,9 @@ class PlayProgressBar: UIView {
     }
     
     // MARK: - 记录
+    /// 记录线横坐标的的数组
+    private var sectionLineXArray: [CGFloat] = []
+    
     private let totalTime: Double!
     
     // MARK: - 各种初始化方法
@@ -53,6 +56,8 @@ class PlayProgressBar: UIView {
         // 初始化整体View
         super.init(frame: frame)
         self.center = CGPoint.init(x: ToolClass.getScreenWidth() / 2, y: FrameStandard.genericButtonSideLength * 4)
+        self.isUserInteractionEnabled = true
+        self.isMultipleTouchEnabled = false
         
         self.initializeProgressView(totalTimeLength: self.totalTime)
         self.initializeCursorView()
@@ -86,6 +91,8 @@ class PlayProgressBar: UIView {
         // 目前BeatLine的X
         var currentSectionLineX = CGFloat(GlobalMusicProperties.timeDifferenceFromNowToNextBeat) * FrameStandard.OneSecondProgressWidth
         
+        self.sectionLineXArray.append(0)
+        
         let sectionLineCount = (beatLineCount - beatLineCount % 4) / 4 + 1
         
         for _ in 0 ..< sectionLineCount {
@@ -98,9 +105,12 @@ class PlayProgressBar: UIView {
             
             beatLine.backgroundColor = UIColor.flatYellow
             backgourdView.addSubview(beatLine)
+            self.sectionLineXArray.append(currentSectionLineX)
             
             currentSectionLineX += CGFloat(beatDuration) * FrameStandard.OneSecondProgressWidth * 4
         }
+        
+        self.sectionLineXArray.append(CGFloat(self.totalTime) * FrameStandard.OneSecondProgressWidth)
         
         self.progressView = backgourdView
         
@@ -121,7 +131,34 @@ class PlayProgressBar: UIView {
     
     /// 初始化{}
     private func initializeBracketsViewArray() -> Void {
+        var tmpLabelArray: [UILabel] = []
         
+        var currentX: CGFloat = 0
+        for index in 0 ..< 2 {
+            let bracketsLabel = UILabel.init(frame:CGRect.init(
+                x: currentX, y: FrameStandard.genericButtonSideLength / 2,
+                width: FrameStandard.cursorSideLength, height: FrameStandard.cursorSideLength * 2
+            ))
+            bracketsLabel.font = UIFont.systemFont(ofSize: 15)
+            
+            switch index {
+            case 0:
+                bracketsLabel.text = "{"
+                
+            case 1:
+                bracketsLabel.text = "}"
+                
+                
+            default:
+                print("不应该来的地方")
+            }
+            
+            tmpLabelArray.append(bracketsLabel)
+            currentX += FrameStandard.cursorSideLength / 2
+            
+        }
+        
+        self.bracketsViewArray = tmpLabelArray
     }
 }
 
@@ -129,17 +166,20 @@ extension PlayProgressBar {
     // MARK: - 运动相关
     /// 游标开始运动
     func cursorAnimation() -> Void {
-        UIView.animate(withDuration: self.totalTime,
-                       delay: 0,
-                       options: [],
-                       animations: {
-                        self.cursorView.frame.origin.x = CGFloat(self.totalTime) * FrameStandard.OneSecondProgressWidth
-        },
-                       completion: { (isFinished) in
-                        if isFinished == true {
-                            self.cursorView.frame.origin.x = 0
-                        }
-        })
+        UIView.animate(
+            withDuration: self.totalTime,
+            delay: 0,
+            options: .curveLinear,
+            animations: {
+                self.cursorView.frame.origin.x = CGFloat(self.totalTime) * FrameStandard.OneSecondProgressWidth
+            },
+            completion: { (isFinished) in
+                if isFinished == true {
+                    self.cursorView.frame.origin.x = 0
+                }
+            }
+            
+        )
     }
     
     /// 取消游标运动
@@ -150,6 +190,95 @@ extension PlayProgressBar {
         self.cursorView.frame.origin.x = 0
         self.cursorView.isHidden = false
     }
+    
+    // MARK: - 工具
+    /// 运动
+    private func getNearestBrackets(point: CGPoint) -> Void {
+        var lineDistanceArray: [Float] = []
+        for sectionLineX in self.sectionLineXArray {
+            let distance = fabsf(Float(point.x - sectionLineX))
+            lineDistanceArray.append(distance)
+            
+        }
+        
+        var nearestLineIndex = 0
+        var nearestLineDistance: Float = 1000
+        
+        for index in 0 ..< lineDistanceArray.count {
+            let distance = lineDistanceArray[index]
+            
+            if distance <= nearestLineDistance {
+                nearestLineIndex = index
+                nearestLineDistance = distance
+            }
+            
+        }
+        
+        
+        
+        var distanceArray: [Float] = [0, 0]
+        
+        for index in 0 ..< 2 {
+            let brackets = self.bracketsViewArray[index]
+            let distance = fabsf(Float(self.sectionLineXArray[nearestLineIndex] - brackets.getX()))
+            
+            distanceArray[index] = distance
+            
+        }
+        
+        var needMoveBracketsIndex = 0
+        if distanceArray[0] > distanceArray[1] {
+            needMoveBracketsIndex = 1
+            
+        }
+        
+        
+        UIView.animate(
+            withDuration: 0.001,
+            delay: 0,
+            options: .curveLinear,
+            animations: {
+                self.bracketsViewArray[needMoveBracketsIndex].frame.origin.x = self.sectionLineXArray[nearestLineIndex]
+            },
+            completion: { (isFinished) in
+                #warning("传值")
+            }
+        )
+        
+    }
 
     
 }
+
+// MARK: - 重载Touch事件
+extension PlayProgressBar {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            self.getNearestBrackets(point: touch.location(in: self))
+        }
+    }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            self.getNearestBrackets(point: touch.location(in: self))
+        }
+        
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        for touch in touches {
+            self.getNearestBrackets(point: touch.location(in: self))
+        }
+        
+        
+    }
+    
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            self.getNearestBrackets(point: touch.location(in: self))
+        }
+    }
+}
+
+

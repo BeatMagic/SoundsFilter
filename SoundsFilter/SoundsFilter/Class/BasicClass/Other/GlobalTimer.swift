@@ -11,6 +11,13 @@ import UIKit
 
 class GlobalTimer: NSObject {
 // MARK: - 一般属性
+    /// 子线程
+    static let globalTimerQueue = DispatchQueue.init(label: "globalTimerQueue",
+                                                      qos: .userInteractive,
+                                                      attributes: .concurrent,
+                                                      autoreleaseFrequency: .never,
+                                                      target: nil)
+    
     /// 最大时长
     static private let MaxDuration: Double = 27
     
@@ -33,34 +40,36 @@ class GlobalTimer: NSObject {
 extension GlobalTimer {
     /// 初始化计时器并开始计时
     static func initializeTimer(timeInterval: Double) -> Void {
-        // 重置当前时间
-        self.currentTime = 0
-        self.repeatCount = 0
-        
-        
-        let tmpTimer = DispatchSource.makeTimerSource()
-        tmpTimer.schedule(deadline: DispatchTime.now(),
-                          repeating: timeInterval,
-                          leeway: DispatchTimeInterval.seconds(0))
-        
-        tmpTimer.setEventHandler {
-            // 第一次不触发要做的事
-            if self.repeatCount != 0 {
-                self.currentTime += timeInterval
-                self.delegate?.doThingsWhenTiming()
+        globalTimerQueue.async {
+            // 重置当前时间
+            self.currentTime = 0
+            self.repeatCount = 0
+            
+            
+            let tmpTimer = DispatchSource.makeTimerSource()
+            tmpTimer.schedule(deadline: DispatchTime.now(),
+                              repeating: timeInterval,
+                              leeway: DispatchTimeInterval.seconds(0))
+            
+            tmpTimer.setEventHandler {
+                // 第一次不触发要做的事
+                if self.repeatCount != 0 {
+                    self.currentTime += timeInterval
+                    self.delegate?.doThingsWhenTiming()
+                    
+                }
                 
+                self.repeatCount += 1
+                
+                if self.currentTime >= MaxDuration {
+                    self.destroyTimer()
+                    
+                }
             }
             
-            self.repeatCount += 1
-            
-            if self.currentTime >= MaxDuration {
-                self.destroyTimer()
-                
-            }
+            self.shared = tmpTimer
+            self.shared!.resume()
         }
-        
-        self.shared = tmpTimer
-        self.shared!.resume()
     }
 
     

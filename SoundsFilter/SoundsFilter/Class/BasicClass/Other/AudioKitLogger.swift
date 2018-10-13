@@ -11,6 +11,13 @@ import AudioKit
 import AudioKitUI
 
 class AudioKitLogger: NSObject {
+    /// 子线程
+    static let audioKitQueue = DispatchQueue.init(label: "audioKitQueue",
+                                                  qos: .userInteractive,
+                                                  attributes: .concurrent,
+                                                  autoreleaseFrequency: .never,
+                                                  target: nil)
+    
     // MARK: - 分析相关
     /// 麦克风
     static private let mic: AKMicrophone = {
@@ -52,21 +59,20 @@ class AudioKitLogger: NSObject {
 extension AudioKitLogger {
     /// 初始化
     static func initializeLogger() -> Void {
-        
-        AKAudioFile.cleanTempDirectory()
-        AKSettings.bufferLength = .medium
-
-        do {
-            try AKSettings.setSession(category: .playAndRecord, with: .allowBluetoothA2DP)
-        } catch {
-            AKLog("Could not set session category.")
+        self.audioKitQueue.async {
+            AKAudioFile.cleanTempDirectory()
+            AKSettings.bufferLength = .medium
+            
+            do {
+                try AKSettings.setSession(category: .playAndRecord, with: .allowBluetoothA2DP)
+            } catch {
+                AKLog("Could not set session category.")
+            }
+            
+            // 初始设置
+            AKSettings.defaultToSpeaker = true
+            micBooster.gain = 0
         }
-        
-        // 初始设置
-        AKSettings.defaultToSpeaker = true
-        micBooster.gain = 0
-        
-
         
     }
     
@@ -141,34 +147,35 @@ extension AudioKitLogger {
     /// 开始录制
     static func startRecording() -> Void {
         
-        self.recorder = try! AKNodeRecorder(node: micMixer)
-        
-        if let file = recorder!.audioFile {
-            self.player = AKPlayer(audioFile: file)
+        self.audioKitQueue.async {
+            self.recorder = try! AKNodeRecorder(node: micMixer)
+            
+            if let file = recorder!.audioFile {
+                self.player = AKPlayer(audioFile: file)
+            }
+            
+            self.player!.isLooping = false
+            
+            self.mainMixer = AKMixer(micBooster, silence, player!)
+            
+            AudioKit.output = mainMixer!
+            
+            
+            do {
+                try AudioKit.start()
+            } catch {
+                AKLog("AudioKit did not start!")
+            }
+            
+            
+            
+            if AKSettings.headPhonesPlugged {
+                micBooster.gain = 1
+            }
+            do {
+                try recorder!.record()
+            } catch { AKLog("Errored recording.") }
         }
-        
-        self.player!.isLooping = false
-        
-        self.mainMixer = AKMixer(micBooster, silence, player!)
-        
-        AudioKit.output = mainMixer!
-        
-        
-        do {
-            try AudioKit.start()
-        } catch {
-            AKLog("AudioKit did not start!")
-        }
-        
-        
-        
-        if AKSettings.headPhonesPlugged {
-            micBooster.gain = 1
-        }
-        do {
-            try recorder!.record()
-        } catch { AKLog("Errored recording.") }
-        
     }
     
     /// 停止录制并返回文件名

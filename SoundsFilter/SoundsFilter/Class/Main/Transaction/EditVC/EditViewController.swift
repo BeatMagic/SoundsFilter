@@ -18,7 +18,10 @@ class EditViewController: UIViewController {
     /// 进度条
     private var playProgressBar: PlayProgressBar? {
         didSet {
-            self.view.addSubview(playProgressBar!)
+            if let playProgressBar = self.playProgressBar {
+                self.view.addSubview(playProgressBar)
+            }
+
         }
     }
     

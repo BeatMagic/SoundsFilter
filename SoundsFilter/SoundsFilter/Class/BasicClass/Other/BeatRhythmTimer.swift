@@ -10,6 +10,13 @@ import UIKit
 import AudioKit
 
 class BeatRhythmTimer: NSObject {
+    /// 子线程
+    static let beatQueue = DispatchQueue.init(label: "beatQueue",
+                                              qos: .userInteractive,
+                                              attributes: .concurrent,
+                                              autoreleaseFrequency: .never,
+                                              target: nil)
+    
     /// 计时器
     static private var shared: DispatchSourceTimer? = nil
     
@@ -37,33 +44,34 @@ class BeatRhythmTimer: NSObject {
 extension BeatRhythmTimer {
     /// 初始化节奏计时器并开始计时
     static func initializeBeatRhythmTimer() -> Void {
-        let duration = GlobalMusicProperties.getBeatDuration() / 5
-        
-        let tmpTimer = DispatchSource.makeTimerSource()
-        tmpTimer.schedule(deadline: DispatchTime.now(),
-                          repeating: duration,
-                          leeway: DispatchTimeInterval.seconds(0))
-        
-        tmpTimer.setEventHandler {
-            if self.repeatCount != 0 {
-                self.currentTime += duration
+        beatQueue.async {
+            let duration = GlobalMusicProperties.getBeatDuration() / 5
+            
+            let tmpTimer = DispatchSource.makeTimerSource()
+            tmpTimer.schedule(deadline: DispatchTime.now(),
+                              repeating: duration,
+                              leeway: DispatchTimeInterval.seconds(0))
+            
+            tmpTimer.setEventHandler {
+                if self.repeatCount != 0 {
+                    self.currentTime += duration
+                    
+                }
+                
+                self.repeatCount += 1
+                
+                if (self.repeatCount - 1) % 5 == 0  {
+                    beatPlayer.play()
+                    beatPlayer.currentTime = 0
+                    
+                }
+                
                 
             }
             
-            self.repeatCount += 1
-            
-            if (self.repeatCount - 1) % 5 == 0  {
-                beatPlayer.play()
-                beatPlayer.currentTime = 0
-                
-            }
-
-            
+            self.shared = tmpTimer
+            self.shared!.resume()
         }
-        
-        self.shared = tmpTimer
-        self.shared!.resume()
-        
     }
     
     /// 获取当前时刻到下一个Beat的时间差
