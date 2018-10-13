@@ -85,7 +85,7 @@ extension EditViewController {
     /// 点击返回
     @objc func clickBackButtonEvent() -> Void {
         self.dismiss(animated: true) {
-
+            AudioKitLogger.resetLogger()
         }
         
     }// funcEnd
@@ -96,11 +96,12 @@ extension EditViewController {
         case .Initial:
             self.recordStatus = .Playing
             self.playButton.setImage(UIImage.init(named: StaticProperties.ImageName.stopPlaying.rawValue), for: .normal)
+            AudioKitLogger.playFile()
             
         case .Playing:
             self.recordStatus = .Initial
             self.playButton.setImage(UIImage.init(named: StaticProperties.ImageName.play.rawValue), for: .normal)
-            
+            AudioKitLogger.stopPlayingFile()
         }
         
         

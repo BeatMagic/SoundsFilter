@@ -151,6 +151,8 @@ extension RecordViewController {
         self.recordButton.tag = 1
         self.recordTitleLabel.text = "录制"
         self.bPMCountLabel.tag = 1
+        
+        AudioKitLogger.initializeLogger()
     }
     
     func setUI() -> Void {
@@ -208,8 +210,8 @@ extension RecordViewController {
             GlobalTimer.delegate = self
             GlobalTimer.initializeTimer(timeInterval: 0.1)
             
-            // 初始化AudioKit
-            AudioKitLogger.initializeLogger()
+            // 开始录制
+            AudioKitLogger.startRecording()
             
             
             
@@ -220,7 +222,7 @@ extension RecordViewController {
             
             // 销毁计时器与AudioKit
             GlobalTimer.destroyTimer()
-            AudioKitLogger.destroyLogger()
+            AudioKitLogger.stopRecording()
             
             // 页面跳转
             let editViewController = UIViewController.initVControllerFromStoryboard("EditViewController")

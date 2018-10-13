@@ -11,39 +11,93 @@ import AudioKit
 import AudioKitUI
 
 class AudioKitLogger: NSObject {
+    // MARK: - 分析相关
     /// 麦克风
-    static private var mic = AKMicrophone()
+    static private let mic: AKMicrophone = {
+        let tmpMic = AKMicrophone.init()
+        
+        return tmpMic
+    }()
     
     /// 跟踪器
-    static private var tracker = AKFrequencyTracker(mic)
+    static private let tracker: AKFrequencyTracker = AKFrequencyTracker(mic)
     
-    static private var silence = AKBooster(tracker, gain: 0)
+    static private let silence = AKBooster(tracker, gain: 0)
+    
+    // MARK: - 记录相关
+    /// 麦克混合器
+    static private let micMixer: AKMixer = AKMixer(mic)
+    
+    /// 麦克加速器
+    static private let micBooster: AKBooster = AKBooster(micMixer)
+    
+    /// 记录器
+    static private var recorder: AKNodeRecorder?
+    //  = try! AKNodeRecorder(node: micMixer)
+    
+    /// 录音信息
+    static private var tape: AKAudioFile?
+    
+    /// 播放器
+    static private var player: AKPlayer?
+//        = AKPlayer(audioFile: recorder.audioFile!)
+    
+    /// 主混合器
+    static private var mainMixer: AKMixer?
+//        = AKMixer(micBooster, silence, player)
+    
 }
 
 // MARK: - 外部接口
 extension AudioKitLogger {
     /// 初始化
     static func initializeLogger() -> Void {
-        AudioKit.output = silence
+        
+        AKAudioFile.cleanTempDirectory()
+        AKSettings.bufferLength = .medium
+
         do {
-            try AudioKit.start()
+            try AKSettings.setSession(category: .playAndRecord, with: .allowBluetoothA2DP)
+        } catch {
+            AKLog("Could not set session category.")
+        }
+        
+        // 初始设置
+        AKSettings.defaultToSpeaker = true
+        micBooster.gain = 0
+        
+
+        
+    }
+    
+    /// 重置
+    static func resetLogger() -> Void {
+        self.player!.stop()
+        
+        do {
+            try self.recorder!.reset()
+            
+        } catch { AKLog("Errored resetting.") }
+        
+        
+        do {
+            try AudioKit.stop()
         } catch {
             AKLog("AudioKit did not start!")
         }
         
-    }
-
-    /// 销毁
-    static func destroyLogger() -> Void {
-        do {
-            try AudioKit.stop()
-        } catch {
-            AKLog("AudioKit did not stop!")
-        }
-        
+        self.player = nil
+        self.mainMixer = nil
+        self.tape = nil
+        self.recorder = nil
+        AKAudioFile.cleanTempDirectory()
     }
     
-    /// 获取实时音符字符串
+}
+
+// MARK: - 频率相关
+extension AudioKitLogger {
+    /// 获取实时声音频率
     static func getRealtimeNote() -> Float? {
         // 当音量大于0.5时
         if self.tracker.amplitude >= 0.5 {
@@ -56,8 +110,73 @@ extension AudioKitLogger {
     
 }
 
+// MARK: - 记录器相关
 extension AudioKitLogger {
+    /// 开始录制
+    static func startRecording() -> Void {
+        
+        self.recorder = try! AKNodeRecorder(node: micMixer)
+        
+        if let file = recorder!.audioFile {
+            self.player = AKPlayer(audioFile: file)
+        }
+        
+        self.player!.isLooping = false
+        
+        self.mainMixer = AKMixer(micBooster, silence, player!)
+        
+        AudioKit.output = mainMixer!
+        
+        
+        do {
+            try AudioKit.start()
+        } catch {
+            AKLog("AudioKit did not start!")
+        }
+        
+        
+        
+        if AKSettings.headPhonesPlugged {
+            micBooster.gain = 1
+        }
+        do {
+            try recorder!.record()
+        } catch { AKLog("Errored recording.") }
+        
+    }
+    
+    /// 停止录制并返回文件名
+    static func stopRecording() -> Void {
+        self.tape = self.recorder!.audioFile!
+        self.player!.load(audioFile: self.tape!)
+        
+        if let _ = self.player!.audioFile?.duration {
+            recorder!.stop()
+            self.tape!.exportAsynchronously(name: "TempTestFile.m4a",
+                                            baseDir: .documents,
+                                            exportFormat: .m4a) {_, exportError in
+                                                if let error = exportError {
+                                                    AKLog("Export Failed \(error)")
+                                                } else {
+                                                    AKLog("Export succeeded")
+                                                }
+            }
+        }
+        
+    }
     
     
+    
+    /// 播放录制好的文件
+    static func playFile() -> Void {
+        self.player!.play()
+        
+    }
+    
+    /// 停止播放
+    static func stopPlayingFile() -> Void {
+        self.player!.stop()
+        
+    }
     
 }
