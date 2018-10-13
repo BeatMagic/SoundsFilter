@@ -29,6 +29,9 @@ class StaticProperties: NSObject {
         /// 停止播放
         case stopPlaying = "stop_playing"
         
+        /// 游标
+        case cursor = "down_arrow"
+        
     }
     
     /// 记录页面状态

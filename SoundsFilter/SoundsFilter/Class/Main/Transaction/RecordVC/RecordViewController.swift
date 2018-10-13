@@ -16,7 +16,6 @@ class RecordViewController: UIViewController {
     
     /// 是否可以更改BPM
     var canChangeBPM: Bool = false
-
     
     // MARK: - UI
     /// 调整BPM按钮
@@ -136,6 +135,7 @@ class RecordViewController: UIViewController {
         return UIBarButtonItem.init(customView: tmpButton)
     }()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -152,7 +152,8 @@ extension RecordViewController {
         self.recordTitleLabel.text = "录制"
         self.bPMCountLabel.tag = 1
         
-        AudioKitLogger.initializeLogger()
+        BeatRhythmTimer.initializeBeatRhythmTimer()
+        
     }
     
     func setUI() -> Void {
@@ -167,6 +168,7 @@ extension RecordViewController {
     /// 点击返回
     @objc func clickBackButtonEvent() -> Void {
         self.dismiss(animated: true) {
+            BeatRhythmTimer.destroyTimer()
         }
         
     }// funcEnd
@@ -176,7 +178,7 @@ extension RecordViewController {
     @objc func touchDownChangeBPMButtonEvent() -> Void {
         if self.recordStatus != .Recording {
             self.canChangeBPM = true
-            
+            BeatRhythmTimer.destroyTimer()
         }
     }
     
@@ -185,14 +187,17 @@ extension RecordViewController {
         if self.canChangeBPM == true {
             let value = sender.value
             let roundingBPM = lroundf(value * 80 + 60)
-            GlobalMusicProperties.musicBPM = Double(roundingBPM)
-            
-            self.bPMCountLabel.text = "BPM:\(GlobalMusicProperties.musicBPM)"
+            self.bPMCountLabel.text = "BPM:\(roundingBPM)"
         }
     }
     
     /// 结束点击BPM按钮
     @objc func touchDragFinishedChangeBPMButtonEvent() -> Void {
+        
+        let value = self.changeBPMButton.value
+        let roundingBPM = lroundf(value * 80 + 60)
+        GlobalMusicProperties.musicBPM = Double(roundingBPM)
+        
         self.canChangeBPM = false
     }
     
@@ -201,8 +206,9 @@ extension RecordViewController {
     @objc func clickRecordButtonEvent() -> Void {
         switch self.recordStatus {
         case .Initial:
+            AudioKitLogger.initializeLogger()
+            
             self.recordStatus = .Recording
-            #warning("开始录制")
             self.recordButton.setImage(UIImage.init(named: StaticProperties.ImageName.stopped.rawValue), for: .normal)
             self.recordTitleLabel.text = "停止"
             
@@ -212,6 +218,7 @@ extension RecordViewController {
             
             // 开始录制
             AudioKitLogger.startRecording()
+            GlobalMusicProperties.timeDifferenceFromNowToNextBeat = BeatRhythmTimer.getTimeDifferenceFromNowToNextBeat()
             
             
             
@@ -221,12 +228,14 @@ extension RecordViewController {
             self.recordTitleLabel.text = "录制"
             
             // 销毁计时器与AudioKit
+            BeatRhythmTimer.destroyTimer()
             GlobalTimer.destroyTimer()
             AudioKitLogger.stopRecording()
             
             // 页面跳转
             let editViewController = UIViewController.initVControllerFromStoryboard("EditViewController")
             self.navigationController!.pushViewController(editViewController, animated: true)
+            
             
         }
         

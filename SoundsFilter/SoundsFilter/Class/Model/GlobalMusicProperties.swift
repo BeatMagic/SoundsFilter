@@ -48,6 +48,9 @@ class GlobalMusicProperties: NSObject {
         self.sectionDuration = 240 / self.musicBPM
         self.beatDuration = self.sectionDuration / 4
         
+        BeatRhythmTimer.destroyTimer()
+        BeatRhythmTimer.initializeBeatRhythmTimer()
+        
     }// funcEnd
     
 }
@@ -56,6 +59,9 @@ class GlobalMusicProperties: NSObject {
 extension GlobalMusicProperties {
     /// 声音频率记录数组
     static var recordFrequencyArray: [Float?] = []
+    
+    /// 当前时刻到下一个Beat的时间差
+    static var timeDifferenceFromNowToNextBeat: Double = 0.0
 }
 
 // MARK: - 静态数据
@@ -65,6 +71,9 @@ extension GlobalMusicProperties {
 
     /// 音阶
     static let NoteNamesWithSharps: [String] = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+    
+
+    
 }
 
 

@@ -9,11 +9,20 @@
 import UIKit
 
 class EditViewController: UIViewController {
+    
 // MARK: - 状态属性
     /// 是否在记录中
-    var recordStatus: StaticProperties.EditVCStatus = .Initial
+    private var recordStatus: StaticProperties.EditVCStatus = .Initial
     
 // MARK: - UI
+    /// 进度条
+    private var playProgressBar: PlayProgressBar? {
+        didSet {
+            self.view.addSubview(playProgressBar!)
+        }
+    }
+    
+    
     /// 播放按钮
     private lazy var playButton: UIButton = {
         let tmpButton = UIButton.init(frame:
@@ -59,11 +68,33 @@ class EditViewController: UIViewController {
         return UIBarButtonItem.init(customView: tmpButton)
     }()
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.playProgressBar = PlayProgressBar.init(totalTimeLength: AudioKitLogger.getAudioFileTotalTime())
+        
+        AudioKitLogger.setPlayerCompletionHandler {
+            self.recordStatus = .Initial
+            self.playButton.setImage(UIImage.init(named: StaticProperties.ImageName.play.rawValue), for: .normal)
+            AudioKitLogger.stopPlayingFile()
+            self.playProgressBar!.cursorCancelAnimation()
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.setData()
         self.setUI()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        self.playProgressBar = nil
+        AudioKitLogger.setPlayerCompletionHandler {
+            
+        }
     }
 
 }
@@ -77,6 +108,8 @@ extension EditViewController {
     func setUI() -> Void {
         self.navigationItem.leftBarButtonItem = self.backButtonItem
         self.playButton.tag = 1
+        
+        
     }
 }
 
@@ -85,23 +118,25 @@ extension EditViewController {
     /// 点击返回
     @objc func clickBackButtonEvent() -> Void {
         self.dismiss(animated: true) {
-            AudioKitLogger.resetLogger()
+            
         }
         
     }// funcEnd
     
-    /// 点击记录/停止
+    /// 点击播放/停止
     @objc func clickRecordButtonEvent() -> Void {
         switch self.recordStatus {
         case .Initial:
             self.recordStatus = .Playing
             self.playButton.setImage(UIImage.init(named: StaticProperties.ImageName.stopPlaying.rawValue), for: .normal)
             AudioKitLogger.playFile()
+            self.playProgressBar!.cursorAnimation()
             
         case .Playing:
             self.recordStatus = .Initial
             self.playButton.setImage(UIImage.init(named: StaticProperties.ImageName.play.rawValue), for: .normal)
             AudioKitLogger.stopPlayingFile()
+            self.playProgressBar!.cursorCancelAnimation()
         }
         
         

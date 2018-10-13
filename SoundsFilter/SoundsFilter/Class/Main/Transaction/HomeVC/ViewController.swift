@@ -13,6 +13,16 @@ class ViewController: UIViewController {
 
     @IBOutlet var addButton: UIButton!
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        
+        // 重置操作
+        BeatRhythmTimer.destroyTimer()
+        AudioKitLogger.resetLogger()
+        GlobalMusicProperties.recordFrequencyArray = []
+        GlobalMusicProperties.timeDifferenceFromNowToNextBeat = 0.0
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

@@ -33,18 +33,18 @@ class AudioKitLogger: NSObject {
     
     /// 记录器
     static private var recorder: AKNodeRecorder?
-    //  = try! AKNodeRecorder(node: micMixer)
     
     /// 录音信息
     static private var tape: AKAudioFile?
     
     /// 播放器
     static private var player: AKPlayer?
-//        = AKPlayer(audioFile: recorder.audioFile!)
     
     /// 主混合器
     static private var mainMixer: AKMixer?
-//        = AKMixer(micBooster, silence, player)
+    
+    /// 播放完成回调闭包
+    static private var completionHandler: (() -> Void)?
     
 }
 
@@ -72,25 +72,50 @@ extension AudioKitLogger {
     
     /// 重置
     static func resetLogger() -> Void {
-        self.player!.stop()
         
-        do {
-            try self.recorder!.reset()
+        if let existingPlayer = self.player {
+            existingPlayer.stop()
             
-        } catch { AKLog("Errored resetting.") }
-        
-        
-        do {
-            try AudioKit.stop()
-        } catch {
-            AKLog("AudioKit did not start!")
+            do {
+                try self.recorder!.reset()
+                
+            } catch { AKLog("Errored resetting.") }
+            
+            
+            do {
+                try AudioKit.stop()
+            } catch {
+                AKLog("AudioKit did not start!")
+            }
+            
+            self.player = nil
+            self.mainMixer = nil
+            self.tape = nil
+            self.recorder = nil
+            AKAudioFile.cleanTempDirectory()
+            
+            
         }
+    }
+    
+    /// 获取播放文件时长
+    static func getAudioFileTotalTime() -> Double {
+        return self.player!.duration
+    }
+    
+    /// 设置播放完成后的回调
+    static func setPlayerCompletionHandler(completionHandler: @escaping (() -> Void)) -> Void {
+        self.completionHandler = completionHandler
+        self.player!.completionHandler = self.playingEnded
         
-        self.player = nil
-        self.mainMixer = nil
-        self.tape = nil
-        self.recorder = nil
-        AKAudioFile.cleanTempDirectory()
+    }
+    
+    static private func playingEnded() {
+        if let completionHandler = self.completionHandler {
+            DispatchQueue.main.async {
+                completionHandler()
+            }
+        }
     }
     
 }
@@ -108,6 +133,7 @@ extension AudioKitLogger {
         return nil
     }
     
+
 }
 
 // MARK: - 记录器相关
@@ -170,7 +196,6 @@ extension AudioKitLogger {
     /// 播放录制好的文件
     static func playFile() -> Void {
         self.player!.play()
-        
     }
     
     /// 停止播放

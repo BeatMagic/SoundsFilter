@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		1FA3647C8F029616B7FBF4C6 /* Pods_SoundsFilter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B8E1C584B3FBF565A62AA90 /* Pods_SoundsFilter.framework */; };
 		7CAE74CB21703B03004395A2 /* MusicConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CAE74CA21703B03004395A2 /* MusicConverter.swift */; };
+		7CF042B52171BECB0076D44B /* BeatRhythmTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF042B42171BECB0076D44B /* BeatRhythmTimer.swift */; };
+		7CF042BB2171CBBF0076D44B /* beatSound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 7CF042BA2171CBBF0076D44B /* beatSound.mp3 */; };
+		7CF042BD2171D0E60076D44B /* PlayProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF042BC2171D0E60076D44B /* PlayProgressBar.swift */; };
 		7CFB8D6D216DA3AC006A6365 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFB8D6C216DA3AC006A6365 /* AppDelegate.swift */; };
 		7CFB8D6F216DA3AC006A6365 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFB8D6E216DA3AC006A6365 /* ViewController.swift */; };
 		7CFB8D72216DA3AC006A6365 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7CFB8D70216DA3AC006A6365 /* Main.storyboard */; };
@@ -30,6 +33,9 @@
 /* Begin PBXFileReference section */
 		1B8E1C584B3FBF565A62AA90 /* Pods_SoundsFilter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SoundsFilter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CAE74CA21703B03004395A2 /* MusicConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicConverter.swift; sourceTree = "<group>"; };
+		7CF042B42171BECB0076D44B /* BeatRhythmTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeatRhythmTimer.swift; sourceTree = "<group>"; };
+		7CF042BA2171CBBF0076D44B /* beatSound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = beatSound.mp3; sourceTree = "<group>"; };
+		7CF042BC2171D0E60076D44B /* PlayProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayProgressBar.swift; sourceTree = "<group>"; };
 		7CFB8D69216DA3AC006A6365 /* SoundsFilter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SoundsFilter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CFB8D6C216DA3AC006A6365 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7CFB8D6E216DA3AC006A6365 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -154,8 +160,8 @@
 		7CFB8D9B216DA851006A6365 /* BasicClass */ = {
 			isa = PBXGroup;
 			children = (
-				7CFB8D9D216DA851006A6365 /* View */,
 				7CFB8D9C216DA851006A6365 /* Other */,
+				7CFB8D9D216DA851006A6365 /* View */,
 			);
 			path = BasicClass;
 			sourceTree = "<group>";
@@ -163,6 +169,7 @@
 		7CFB8D9C216DA851006A6365 /* Other */ = {
 			isa = PBXGroup;
 			children = (
+				7CF042B42171BECB0076D44B /* BeatRhythmTimer.swift */,
 				7CFED165216F38F2009FD60B /* GlobalTimer.swift */,
 				7CFED167216F5FB9009FD60B /* AudioKitLogger.swift */,
 			);
@@ -172,6 +179,7 @@
 		7CFB8D9D216DA851006A6365 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				7CF042BC2171D0E60076D44B /* PlayProgressBar.swift */,
 				7CFED161216EE6DD009FD60B /* SizeSlideButton.swift */,
 			);
 			path = View;
@@ -218,6 +226,7 @@
 			isa = PBXGroup;
 			children = (
 				7CFB8D73216DA3AD006A6365 /* Assets.xcassets */,
+				7CF042BA2171CBBF0076D44B /* beatSound.mp3 */,
 			);
 			name = Resource;
 			sourceTree = "<group>";
@@ -307,6 +316,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7CF042BB2171CBBF0076D44B /* beatSound.mp3 in Resources */,
 				7CFB8D77216DA3AD006A6365 /* LaunchScreen.storyboard in Resources */,
 				7CFB8D74216DA3AD006A6365 /* Assets.xcassets in Resources */,
 				7CFB8D72216DA3AC006A6365 /* Main.storyboard in Resources */,
@@ -379,8 +389,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7CF042BD2171D0E60076D44B /* PlayProgressBar.swift in Sources */,
 				7CFED162216EE6DE009FD60B /* SizeSlideButton.swift in Sources */,
 				7CFB8DA6216DA851006A6365 /* ExtensionForSomeClass.swift in Sources */,
+				7CF042B52171BECB0076D44B /* BeatRhythmTimer.swift in Sources */,
 				7CFED166216F38F2009FD60B /* GlobalTimer.swift in Sources */,
 				7CFB8DB7216E183E006A6365 /* StaticProperties.swift in Sources */,
 				7CFB8DA5216DA851006A6365 /* FrameStandard.swift in Sources */,
