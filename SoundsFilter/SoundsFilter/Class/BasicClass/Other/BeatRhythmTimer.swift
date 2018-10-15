@@ -8,6 +8,7 @@
 
 import UIKit
 import AudioKit
+import AudioToolbox
 
 class BeatRhythmTimer: NSObject {
     /// 子线程
@@ -44,6 +45,7 @@ class BeatRhythmTimer: NSObject {
 extension BeatRhythmTimer {
     /// 初始化节奏计时器并开始计时
     static func initializeBeatRhythmTimer() -> Void {
+        
         beatQueue.async {
             let duration = GlobalMusicProperties.getBeatDuration() / 5
             

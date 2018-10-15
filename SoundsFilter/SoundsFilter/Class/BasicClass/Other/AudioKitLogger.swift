@@ -72,6 +72,26 @@ extension AudioKitLogger {
             // 初始设置
             AKSettings.defaultToSpeaker = true
             micBooster.gain = 0
+            
+            self.recorder = try! AKNodeRecorder(node: micMixer)
+            
+            if let file = recorder!.audioFile {
+                self.player = AKPlayer(audioFile: file)
+            }
+            
+            self.player!.isLooping = false
+            
+            self.mainMixer = AKMixer(micBooster, silence, player!)
+            
+            AudioKit.output = mainMixer!
+            
+            
+            do {
+                try AudioKit.start()
+            } catch {
+                AKLog("AudioKit did not start!")
+            }
+            
         }
         
     }
@@ -148,25 +168,6 @@ extension AudioKitLogger {
     static func startRecording() -> Void {
         
         self.audioKitQueue.async {
-            self.recorder = try! AKNodeRecorder(node: micMixer)
-            
-            if let file = recorder!.audioFile {
-                self.player = AKPlayer(audioFile: file)
-            }
-            
-            self.player!.isLooping = false
-            
-            self.mainMixer = AKMixer(micBooster, silence, player!)
-            
-            AudioKit.output = mainMixer!
-            
-            
-            do {
-                try AudioKit.start()
-            } catch {
-                AKLog("AudioKit did not start!")
-            }
-            
             
             
             if AKSettings.headPhonesPlugged {

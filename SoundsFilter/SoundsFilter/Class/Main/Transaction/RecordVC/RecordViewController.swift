@@ -153,6 +153,7 @@ extension RecordViewController {
         self.bPMCountLabel.tag = 1
         
         BeatRhythmTimer.initializeBeatRhythmTimer()
+        AudioKitLogger.initializeLogger()
         
     }
     
@@ -206,7 +207,6 @@ extension RecordViewController {
     @objc func clickRecordButtonEvent() -> Void {
         switch self.recordStatus {
         case .Initial:
-            AudioKitLogger.initializeLogger()
             
             self.recordStatus = .Recording
             self.recordButton.setImage(UIImage.init(named: StaticProperties.ImageName.stopped.rawValue), for: .normal)
