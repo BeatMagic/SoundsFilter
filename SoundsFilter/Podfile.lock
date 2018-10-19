@@ -10,6 +10,7 @@ PODS:
   - HGRippleRadarView (0.1.2)
   - SnapKit (4.0.1)
   - SVProgressHUD (2.2.5)
+  - SwiftCharts (0.6.3)
   - SwiftyXMLParser (4.2.0)
   - Timepiece (1.3.1)
 
@@ -20,6 +21,7 @@ DEPENDENCIES:
   - HGRippleRadarView
   - SnapKit (~> 4.0.0)
   - SVProgressHUD
+  - SwiftCharts (from `https://github.com/i-schuetz/SwiftCharts.git`)
   - SwiftyXMLParser (from `https://github.com/yahoojapan/SwiftyXMLParser.git`)
   - Timepiece
 
@@ -34,6 +36,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   ChameleonFramework:
     :git: https://github.com/ViccAlexander/Chameleon.git
+  SwiftCharts:
+    :git: https://github.com/i-schuetz/SwiftCharts.git
   SwiftyXMLParser:
     :git: https://github.com/yahoojapan/SwiftyXMLParser.git
 
@@ -41,6 +45,9 @@ CHECKOUT OPTIONS:
   ChameleonFramework:
     :commit: 6dd284bde21ea2e7f9fd89bc36f40df16e16369d
     :git: https://github.com/ViccAlexander/Chameleon.git
+  SwiftCharts:
+    :commit: 9e80cc9e4785e9c64a5b0d0cce4cae87f3d5635f
+    :git: https://github.com/i-schuetz/SwiftCharts.git
   SwiftyXMLParser:
     :commit: 8d5c12d0f1109621b6a4a90a30e3ad635d7efc75
     :git: https://github.com/yahoojapan/SwiftyXMLParser.git
@@ -51,9 +58,10 @@ SPEC CHECKSUMS:
   HGRippleRadarView: 5379e27634c09222ebc836671c7425ad7b257cc4
   SnapKit: 0de968a9fec17499afa29683b05d0c775b6d1c29
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
+  SwiftCharts: 1535b5e228702af2c9c4d60c2a408f2f0f579fa8
   SwiftyXMLParser: 0942fd979ab5c54658e16628156e9d32e08924c5
   Timepiece: c0760ec0e545697d86b80424dcd2b4d5ef66cf51
 
-PODFILE CHECKSUM: 8568ae8c31e9cb7b1b645b7ff0dd265dbd12d7f5
+PODFILE CHECKSUM: 40226c24845280e76db822f1f5d5e6da081d55a2
 
 COCOAPODS: 1.6.0.beta.1

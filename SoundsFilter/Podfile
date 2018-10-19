@@ -24,6 +24,9 @@ target 'SoundsFilter' do
     pod 'AudioKit', '~> 4.0'
     pod 'AudioKit/UI'
 
+# 函数图像
+    pod 'SwiftCharts', :git => 'https://github.com/i-schuetz/SwiftCharts.git'
+
 end
 
 

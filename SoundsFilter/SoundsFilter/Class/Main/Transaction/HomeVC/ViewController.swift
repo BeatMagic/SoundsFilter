@@ -37,6 +37,9 @@ class ViewController: UIViewController {
 // MARK: - 设置函数封装
 extension ViewController {
     func setData() -> Void {
+    }
+    
+    func setUI() -> Void {
         // 设置addButton
         self.addButton.frame = CGRect.init(x: 0, y: 0,
                                            width: FrameStandard.genericButtonSideLength,
@@ -44,11 +47,6 @@ extension ViewController {
         self.addButton.center = CGPoint.init(x: ToolClass.getScreenWidth() / 2,
                                              y: ToolClass.getScreenHeight() / 5 * 4)
         self.addButton.addTarget(self, action: #selector(self.clickAddButtonEvent), for: .touchUpInside)
-        
-    }
-    
-    func setUI() -> Void {
-        
     }
 }
 

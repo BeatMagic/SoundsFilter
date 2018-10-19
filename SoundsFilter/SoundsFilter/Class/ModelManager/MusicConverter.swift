@@ -11,36 +11,160 @@ import UIKit
 // MARK: - 频率相关
 class MusicConverter: NSObject {
     /// 给定一个频率 量化到一个音名
-    static func getMusicalAlphabetFrom(frequency: Float) -> String {
-        let noteFrequencies = GlobalMusicProperties.NoteFrequencies
-        var tmpFrequency = frequency
+    /*
+     static func getMusicalAlphabetFrom(frequency: Double) -> String {
+     let noteFrequencies = GlobalMusicProperties.NoteFrequencies
+     var tmpFrequency = frequency
+     
+     
+     // 确定到音
+     while frequency > noteFrequencies[noteFrequencies.count - 1] {
+     tmpFrequency /= 2.0
+     }
+     
+     while frequency < noteFrequencies[0] {
+     tmpFrequency *= 2.0
+     }
+     
+     var minDistance: Float = 10_000.0
+     var index = 0
+     
+     for i in 0 ..< noteFrequencies.count {
+     let distance = fabsf(noteFrequencies[i] - frequency)
+     if distance < minDistance {
+     index = i
+     minDistance = distance
+     }
+     }
+     
+     // 获取八度
+     let octave = Int(log2f(Float(frequency / tmpFrequency)))
+     
+     return "\(GlobalMusicProperties.NoteNamesWithSharps[index])\(octave)"
+     
+     
+     }// funcEnd
+     */
+    
+    
+    /// 通过一个音高字符串("C4")获取该音高的频率
+    static func getFrequencyFrom(pitchName: String) -> Double {
+        let pitchScale = self.getFrequencyArrayIndexFrom(pitchName: pitchName)
         
+        let octaveCountString = ToolClass.cutStringWithPlaces(
+            pitchName, startPlace: pitchName.count - 1, endPlace: pitchName.count
+        )
         
-        // 确定到音
-        while frequency > noteFrequencies[noteFrequencies.count - 1] {
-            tmpFrequency /= 2.0
-        }
+        let needExponentialCoefficient = pow(2, Double(octaveCountString)!)
         
-        while frequency < noteFrequencies[0] {
-            tmpFrequency *= 2.0
-        }
+        return GlobalMusicProperties.NoteFrequencies[pitchScale] * needExponentialCoefficient
         
-        var minDistance: Float = 10_000.0
-        var index = 0
+    }
+    
+    /// 通过一个音高字符串("C4")获取该音高的频率的数组index
+    static func getFrequencyArrayIndexFrom(pitchName: String) -> Int {
+        var pitchScale = 0
         
-        for i in 0 ..< noteFrequencies.count {
-            let distance = fabsf(noteFrequencies[i] - frequency)
-            if distance < minDistance {
-                index = i
-                minDistance = distance
+        for index in 0 ..< GlobalMusicProperties.NoteNamesWithSharps.count {
+            let scale = GlobalMusicProperties.NoteNamesWithSharps[index]
+            
+            if (pitchName.range(of: scale) != nil) {
+                pitchScale = index
             }
         }
         
-        // 获取八度
-        let octave = Int(log2f(Float(frequency / tmpFrequency)))
+        return pitchScale
+    }
+    
+    /// 给定一个频率 求其近似pitch
+    static func getApproximatePitch(frequency: Double) -> String {
+        var index = 0
+
+        for model in GlobalMusicProperties.PitchFrequencyModelArray {
+            if model.fequency < frequency {
+                index += 1
+                
+            }else {
+                break
+                
+            }
+        }
         
-        return "\(GlobalMusicProperties.NoteNamesWithSharps[index])\(octave)"
+        let prevModel = GlobalMusicProperties.PitchFrequencyModelArray[index - 1]
+        let nextModel = GlobalMusicProperties.PitchFrequencyModelArray[index]
         
+        
+        if (frequency - prevModel.fequency) <= (nextModel.fequency - frequency) {
+            return prevModel.pitchName
+            
+        }else {
+            
+            return nextModel.pitchName
+        }
+
+    }// funcEnd
+    
+    /// 给定一个频率 求其纵坐标高
+    static func getFrameY(frequency: Double) -> Double {
+        var index = 0
+        
+        for model in GlobalMusicProperties.PitchFrequencyModelArray {
+            if model.fequency < frequency {
+                index += 1
+                
+            }else {
+                break
+                
+            }
+        }
+        
+        let prevModel = GlobalMusicProperties.PitchFrequencyModelArray[index - 1]
+        let nextModel = GlobalMusicProperties.PitchFrequencyModelArray[index]
+        
+        // 第几个八度
+        let scale = ToolClass.cutStringWithPlaces(prevModel.pitchName, startPlace: prevModel.pitchName.count - 1, endPlace: prevModel.pitchName.count)
+        
+        // 音名
+        let musicalAlphabet = ToolClass.cutStringWithPlaces(prevModel.pitchName, startPlace: 0, endPlace: prevModel.pitchName.count - 1)
+        
+        var noteNamesIndex: Double = 0
+        for noteNames in GlobalMusicProperties.NoteNamesWithSharps {
+            if musicalAlphabet == noteNames {
+                break
+            }
+            
+            noteNamesIndex += 1
+            
+        }
+        
+        let scaleLength = Double(GlobalMusicProperties.NoteNamesWithSharps.count * Int(scale)!) + noteNamesIndex
+        
+        
+        
+        return scaleLength + (frequency - prevModel.fequency) / (nextModel.fequency - prevModel.fequency)
+        
+    }// funcEnd
+    
+    
+    
+    /// 频率数组提纯
+    static func purifyFrequencyModel(frequencyArray: [Double?]) -> [FrequencyDurationModel] {
+        var frequencyModelArray: [FrequencyDurationModel] = []
+        
+        var currentTime = 0.0
+        for frequency in frequencyArray {
+            if let existFrequency = frequency {
+                
+                let model = FrequencyDurationModel.init(frequency: existFrequency, startTime: currentTime)
+                
+                frequencyModelArray.append(model)
+                
+            }
+            
+            currentTime += GlobalMusicProperties.getDetectFrequencyDuration()
+        }
+        
+        return frequencyModelArray
         
     }// funcEnd
     
@@ -93,7 +217,7 @@ extension MusicConverter {
         
     }// funcEnd
     
-    /// 通过一个音符字符串获取midi音符数字 "C4"
+    /// 通过一个音符字符串("C4")获取音高
     static func getMidiNoteFromString(_ noteString: String) -> UInt8 {
         let scale = ToolClass.cutStringWithPlaces(
             noteString, startPlace: 0, endPlace: 1
@@ -116,6 +240,8 @@ extension MusicConverter {
         return self.getMidiNote(scale, octaveCount: Int(octaveCountString)!, isRising: isRising)
         
     }
+    
+    
     
 }
 

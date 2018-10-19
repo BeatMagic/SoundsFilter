@@ -214,7 +214,7 @@ extension RecordViewController {
             
             // 创建计时器并开始计时
             GlobalTimer.delegate = self
-            GlobalTimer.initializeTimer(timeInterval: 0.1)
+            GlobalTimer.initializeTimer()
             
             // 开始录制
             AudioKitLogger.startRecording()
@@ -224,8 +224,11 @@ extension RecordViewController {
             
         case .Recording:
             self.recordStatus = .Initial
-            self.recordButton.setImage(UIImage.init(named: StaticProperties.ImageName.record.rawValue), for: .normal)
-            self.recordTitleLabel.text = "录制"
+            DispatchQueue.main.async {
+                self.recordButton.setImage(UIImage.init(named: StaticProperties.ImageName.record.rawValue), for: .normal)
+                self.recordTitleLabel.text = "录制"
+            }
+            
             
             // 销毁计时器与AudioKit
             BeatRhythmTimer.destroyTimer()

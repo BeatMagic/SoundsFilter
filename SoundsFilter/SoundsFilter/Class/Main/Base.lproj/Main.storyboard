@@ -109,11 +109,33 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="qBX-Sh-sCB"/>
                     </view>
-                    <navigationItem key="navigationItem" title="编辑" id="PuL-Cm-WTg"/>
+                    <navigationItem key="navigationItem" title="编辑" id="PuL-Cm-WTg">
+                        <barButtonItem key="rightBarButtonItem" title="图像" id="fBu-SH-gEc">
+                            <connections>
+                                <segue destination="RXr-Ss-XCF" kind="show" id="rPZ-9S-QIY"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iyy-vS-x3T" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="630" y="1433"/>
+        </scene>
+        <!--图像-->
+        <scene sceneID="Uii-MP-bwT">
+            <objects>
+                <viewController storyboardIdentifier="EquationVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="RXr-Ss-XCF" customClass="EquationVC" customModule="SoundsFilter" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="fR6-JV-Fzr">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="6TI-Ts-j4b"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="图像" id="Hjp-qN-xIX"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5z4-eM-dam" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1530" y="1433"/>
         </scene>
     </scenes>
     <resources>

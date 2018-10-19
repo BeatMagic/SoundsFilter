@@ -27,7 +27,7 @@ class AudioKitLogger: NSObject {
     }()
     
     /// 跟踪器
-    static private let tracker: AKFrequencyTracker = AKFrequencyTracker(mic)
+    static private let tracker: AKFrequencyTracker = AKFrequencyTracker.init(mic, peakCount: 3)
     
     static private let silence = AKBooster(tracker, gain: 0)
     
@@ -45,13 +45,24 @@ class AudioKitLogger: NSObject {
     static private var tape: AKAudioFile?
     
     /// 播放器
-    static private var player: AKPlayer?
+    static var player: AKPlayer?
     
     /// 主混合器
     static private var mainMixer: AKMixer?
     
     /// 播放完成回调闭包
     static private var completionHandler: (() -> Void)?
+    
+    /// 调音需要
+    static private var pitchShifter: AKPitchShifter?
+    
+    
+    
+    static private let finalSequencer = AKSequencer.init()
+    /// 播放混合器
+    static private var playMixer: AKMixer = AKMixer.init()
+    
+    
     
 }
 
@@ -81,7 +92,10 @@ extension AudioKitLogger {
             
             self.player!.isLooping = false
             
-            self.mainMixer = AKMixer(micBooster, silence, player!)
+            self.pitchShifter = AKPitchShifter.init(self.player!)
+            self.pitchShifter!.rampDuration = 0
+            
+            self.mainMixer = AKMixer(micBooster, silence)
             
             AudioKit.output = mainMixer!
             
@@ -125,8 +139,15 @@ extension AudioKitLogger {
     }
     
     /// 获取播放文件时长
-    static func getAudioFileTotalTime() -> Double {
-        return self.player!.duration
+    static func getAudioFileTotalTime() -> Double? {
+        
+        if let player = self.player {
+            return player.duration
+            
+        }else {
+            return nil
+            
+        }
     }
     
     /// 设置播放完成后的回调
@@ -149,13 +170,19 @@ extension AudioKitLogger {
 // MARK: - 频率相关
 extension AudioKitLogger {
     /// 获取实时声音频率
-    static func getRealtimeNote() -> Float? {
-        // 当音量大于0.5时
-        if self.tracker.amplitude >= 0.5 {
-            
-            return Float(tracker.frequency)
-        }
+    static func getRealtimeNote() -> Double? {
         
+        // 当音量大于0.1时
+        if self.tracker.amplitude >= 0.1
+            &&
+            self.tracker.frequency > GlobalMusicProperties.VocalFrequencyInterval.first!
+            &&
+            self.tracker.frequency < GlobalMusicProperties.VocalFrequencyInterval.last!
+            {
+                
+            return self.tracker.frequency
+        }
+
         return nil
     }
     
@@ -203,13 +230,80 @@ extension AudioKitLogger {
     
     /// 播放录制好的文件
     static func playFile() -> Void {
-        self.player!.play()
+        
+        playMixer.connect(input: pitchShifter)
+        
+        AudioKit.output = playMixer
+        
+        let delayTime = GlobalMusicProperties.getSectionDuration() - GlobalMusicProperties.timeDifferenceFromNowToNextBeat
+        
+        finalSequencer.play()
+        
+        
+        DelayTask.createTaskWith(workItem: {
+            self.player!.play()
+        }, delayTime: delayTime)
+        
+
     }
     
     /// 停止播放
     static func stopPlayingFile() -> Void {
         self.player!.stop()
-        
+        finalSequencer.stop()
     }
+    
+    /// 设置pitchShifter
+    static func setPitchShifter(shift: Double) -> Void {
+        self.pitchShifter!.shift = shift
+    }// funcEnd
+}
+
+// MARK: - 伴奏相关
+extension AudioKitLogger {
+    /// 初始化Sequencer
+    static func initializeSequencer(finalChordNameArray: [String]) -> Void {
+        
+        
+        
+        for index in 0 ..< finalChordNameArray.count {
+            
+
+            let chordName = finalChordNameArray[index]
+            
+            if index == 0 {
+                finalSequencer.loadMIDIFile(chordName)
+                
+            }else {
+//                finalSequencer.addMIDIFileTracks(chordName, useExistingSequencerLength: false)
+                #warning("待修复")
+                
+                
+                
+            }
+            
+//            finalSequencer.addMIDIFileTracks(chordName)
+
+        }
+        
+        
+        finalSequencer.setTempo(GlobalMusicProperties.musicBPM)
+        
+        
+        let array = [0, 33, 5, 108, 90, 101, 9]
+        
+        for index in 0 ..< array.count {
+            let serialNumber = array[index]
+            
+            let sampler = AKMIDISampler()
+            try! sampler.loadMelodicSoundFont("GeneralUser", preset: serialNumber)
+            
+            finalSequencer.tracks[index].setMIDIOutput(sampler.midiIn)
+            
+            playMixer.connect(input: sampler)
+        }
+        
+    }// funcEnd
+    
     
 }

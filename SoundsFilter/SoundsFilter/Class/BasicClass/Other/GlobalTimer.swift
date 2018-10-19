@@ -39,12 +39,12 @@ class GlobalTimer: NSObject {
 // MARK: - 外部接口
 extension GlobalTimer {
     /// 初始化计时器并开始计时
-    static func initializeTimer(timeInterval: Double) -> Void {
+    static func initializeTimer() -> Void {
         globalTimerQueue.async {
             // 重置当前时间
             self.currentTime = 0
             self.repeatCount = 0
-            
+            let timeInterval = GlobalMusicProperties.getDetectFrequencyDuration()
             
             let tmpTimer = DispatchSource.makeTimerSource()
             tmpTimer.schedule(deadline: DispatchTime.now(),
