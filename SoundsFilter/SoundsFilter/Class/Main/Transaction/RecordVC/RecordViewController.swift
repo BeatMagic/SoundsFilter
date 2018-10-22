@@ -8,6 +8,7 @@
 
 import UIKit
 import ChameleonFramework
+import SVProgressHUD
 
 class RecordViewController: UIViewController {
     // MARK: - 状态属性
@@ -16,6 +17,10 @@ class RecordViewController: UIViewController {
     
     /// 是否可以更改BPM
     var canChangeBPM: Bool = false
+    
+    /// 临时存储的BPM
+    var tmpBPM: Double = GlobalMusicProperties.musicBPM
+
     
     // MARK: - UI
     /// 调整BPM按钮
@@ -41,9 +46,18 @@ class RecordViewController: UIViewController {
         tmpButton.trackColor = UIColor.flatGray
         tmpButton.handle.color = UIColor.flatRed
         
+//        let longpressGesutre = UILongPressGestureRecognizer(target: self, action: #selector(self.touchDownChangeBPMButtonEvent))
+//        longpressGesutre.minimumPressDuration = 1
+//        //所需触摸1次
+//        longpressGesutre.numberOfTouchesRequired = 1
+//
+//        tmpButton.addGestureRecognizer(longpressGesutre)
+        
+//        tmpButton.addTarget(self, action:  #selector(self.allTouchEvents), for: .allEvents)
         tmpButton.addTarget(self, action: #selector(self.touchDownChangeBPMButtonEvent), for: .touchDown)
         tmpButton.addTarget(self, action: #selector(self.valueChangedChangeBPMButtonEvent), for: .valueChanged)
         tmpButton.addTarget(self, action: #selector(self.touchDragFinishedChangeBPMButtonEvent), for: .touchDragFinished)
+        tmpButton.addTarget(self, action: #selector(self.touchDragFinishedChangeBPMButtonEvent), for: .touchUpInside)
         
         self.view.addSubview(tmpButton)
         
@@ -177,10 +191,12 @@ extension RecordViewController {
     // MARK: BPM按钮
     /// 长按BPM按钮
     @objc func touchDownChangeBPMButtonEvent() -> Void {
+        
         if self.recordStatus != .Recording {
             self.canChangeBPM = true
             BeatRhythmTimer.destroyTimer()
         }
+        
     }
     
     /// 滑动BPM按钮
@@ -188,6 +204,7 @@ extension RecordViewController {
         if self.canChangeBPM == true {
             let value = sender.value
             let roundingBPM = lroundf(value * 80 + 60)
+            self.tmpBPM = Double(roundingBPM)
             self.bPMCountLabel.text = "BPM:\(roundingBPM)"
         }
     }
@@ -195,12 +212,14 @@ extension RecordViewController {
     /// 结束点击BPM按钮
     @objc func touchDragFinishedChangeBPMButtonEvent() -> Void {
         
-        let value = self.changeBPMButton.value
-        let roundingBPM = lroundf(value * 80 + 60)
-        GlobalMusicProperties.musicBPM = Double(roundingBPM)
+        GlobalMusicProperties.musicBPM = self.tmpBPM
         
         self.canChangeBPM = false
     }
+
+    @objc func allTouchEvents() -> Void {
+        
+    }// funcEnd
     
     // MARK: 录制按钮
     /// 点击记录/停止
@@ -224,22 +243,27 @@ extension RecordViewController {
             
         case .Recording:
             self.recordStatus = .Initial
-            DispatchQueue.main.async {
+            
+            let queueGroup = DispatchGroup.init()
+            let basicQueue = DispatchQueue(label: "basicQueue")
+            
+            SVProgressHUD.show(withStatus: "处理中...")
+            
+            basicQueue.async(group: queueGroup, execute: {
+                // 销毁计时器与AudioKit
+                BeatRhythmTimer.destroyTimer()
+                GlobalTimer.destroyTimer()
+                AudioKitLogger.stopRecording()
+            })
+            
+            queueGroup.notify(queue: DispatchQueue.main) {
+                SVProgressHUD.dismiss()
                 self.recordButton.setImage(UIImage.init(named: StaticProperties.ImageName.record.rawValue), for: .normal)
                 self.recordTitleLabel.text = "录制"
+                // 页面跳转
+                let editViewController = UIViewController.initVControllerFromStoryboard("EditViewController")
+                self.navigationController!.pushViewController(editViewController, animated: true)
             }
-            
-            
-            // 销毁计时器与AudioKit
-            BeatRhythmTimer.destroyTimer()
-            GlobalTimer.destroyTimer()
-            AudioKitLogger.stopRecording()
-            
-            // 页面跳转
-            let editViewController = UIViewController.initVControllerFromStoryboard("EditViewController")
-            self.navigationController!.pushViewController(editViewController, animated: true)
-            
-            
         }
         
         

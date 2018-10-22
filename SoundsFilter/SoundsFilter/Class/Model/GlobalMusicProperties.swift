@@ -20,8 +20,11 @@ class GlobalMusicProperties: NSObject {
                 musicBPM = 60
                 
             }else {
-                self.resetDataAboutMusicBPM()
+                self.sectionDuration = 240 / self.musicBPM
+                self.beatDuration = self.sectionDuration / 4
+                self.minNoteDuration = 7.5 /  self.musicBPM
                 
+                self.resetDataAboutMusicBPM()
             }
         }
     }
@@ -61,12 +64,20 @@ class GlobalMusicProperties: NSObject {
     
     /// 更改速度后重设相关数据
     static private func resetDataAboutMusicBPM() -> Void {
-        self.sectionDuration = 240 / self.musicBPM
-        self.beatDuration = self.sectionDuration / 4
-        self.minNoteDuration = 7.5 /  self.musicBPM
+        let queueGroup = DispatchGroup.init()
+        let basicQueue = DispatchQueue(label: "basicQueue")
         
-        BeatRhythmTimer.destroyTimer()
-        BeatRhythmTimer.initializeBeatRhythmTimer()
+        
+        basicQueue.async(group: queueGroup, execute: {
+            BeatRhythmTimer.destroyTimer()
+        })
+        
+        queueGroup.notify(queue: DispatchQueue.main) {
+            BeatRhythmTimer.initializeBeatRhythmTimer()
+        }
+        
+        
+        
         
     }// funcEnd
     

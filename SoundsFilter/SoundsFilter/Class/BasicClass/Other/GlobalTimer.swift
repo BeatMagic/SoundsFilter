@@ -62,6 +62,7 @@ extension GlobalTimer {
                 self.repeatCount += 1
                 
                 if self.currentTime >= MaxDuration {
+                    self.delegate?.doThingsWhenEnd()
                     self.destroyTimer()
                     
                 }

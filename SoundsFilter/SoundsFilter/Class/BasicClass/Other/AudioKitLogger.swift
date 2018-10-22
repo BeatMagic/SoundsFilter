@@ -57,10 +57,12 @@ class AudioKitLogger: NSObject {
     static private var pitchShifter: AKPitchShifter?
     
     
-    
-    static private let finalSequencer = AKSequencer.init()
+    static private var finalSequencer: AKSequencer?
     /// 播放混合器
     static private var playMixer: AKMixer = AKMixer.init()
+    
+    static private var midiSamplerArray: [AKMIDISampler] = []
+
     
     
     
@@ -229,29 +231,32 @@ extension AudioKitLogger {
     
     
     /// 播放录制好的文件
-    static func playFile() -> Void {
+    static func playFile(action: @escaping (() -> Void)) -> Void {
+        
         
         playMixer.connect(input: pitchShifter)
         
         AudioKit.output = playMixer
         
+        finalSequencer!.play()
+        
+        
         let delayTime = GlobalMusicProperties.getSectionDuration() - GlobalMusicProperties.timeDifferenceFromNowToNextBeat
         
-        
-        finalSequencer.play()
-        
-        
         DelayTask.createTaskWith(workItem: {
-            self.player!.play()
+            AudioKitLogger.player!.play()
+            action()
+            
         }, delayTime: delayTime)
         
-
     }
     
     /// 停止播放
     static func stopPlayingFile() -> Void {
+        DelayTask.cancelAllWorkItems()
         self.player!.stop()
-        finalSequencer.stop()
+        finalSequencer!.stop()
+        self.finalSequencer = nil
     }
     
     /// 设置pitchShifter
@@ -264,61 +269,66 @@ extension AudioKitLogger {
 extension AudioKitLogger {
     /// 初始化Sequencer
     static func initializeSequencer(finalChordNameArray: [String]) -> Void {
+        self.finalSequencer = AKSequencer.init()
         
-        let array = [0, 10, 33, 5, 108, 90, 101, 9]
+        let array = [0, 128, 33, 5, 108, 90, 101, 9]
         
         for index in 0 ..< array.count {
             
-            let serialNumber = array[index]
-            
             let sampler = AKMIDISampler()
-            try! sampler.loadMelodicSoundFont("GeneralUser", preset: 50)
             
-            _=finalSequencer.newTrack()
-            finalSequencer.tracks[index].setMIDIOutput(sampler.midiIn)
+//            try! sampler.loadSoundFont("GeneralUser", preset: index, bank: 1)
+            try! sampler.loadMelodicSoundFont("GeneralUser", preset: index)
+            
+            
+            _ = finalSequencer!.newTrack()
+            finalSequencer!.tracks[index].setMIDIOutput(sampler.midiIn)
             
             playMixer.connect(input: sampler)
             
+            self.midiSamplerArray.append(sampler)
+            
         }
+        
         var lastClipBeats = 0.0
-        finalSequencer.setLength( AKDuration(beats: 4*finalChordNameArray.count))
+        finalSequencer!.setLength(AKDuration(beats: 4 * finalChordNameArray.count))
+        finalSequencer!.setTempo(GlobalMusicProperties.musicBPM)
+        
         for index in 0 ..< finalChordNameArray.count {
             
-
             let chordName = finalChordNameArray[index]
-            let temp = AKSequencer.init();
+            let temp = AKSequencer.init()
             temp.loadMIDIFile(chordName)
             
             print(lastClipBeats)
             let tempTracks = temp.tracks
-            let tracks = finalSequencer.tracks
+            let tracks = finalSequencer!.tracks
             assert(tempTracks.count==tracks.count)
-            for trackIndex in 0 ..< tracks.count{
+            for trackIndex in 0 ..< tracks.count {
                 
-                for noteData in tempTracks[trackIndex].getMIDINoteData(){
+                let noteDataArray = tempTracks[trackIndex].getMIDINoteData()
+                
+                for noteData in noteDataArray {
                     var setNoteData = noteData
                     let oldBeat = noteData.position.beats
                     let newBeat = oldBeat + lastClipBeats
-                    setNoteData.channel = 0
+                    setNoteData.channel = 1
                     setNoteData.position = AKDuration(beats: newBeat)//, tempo:GlobalMusicProperties.musicBPM)
                     tracks[trackIndex].add(midiNoteData: setNoteData)
                 }
             }
             
             lastClipBeats += temp.length.beats
-            #warning("待修复")
             
         }
-        for t in finalSequencer.tracks{
+        
+        for t in finalSequencer!.tracks{
             print("track==========================================")
             for nt in t.getMIDINoteData(){
                 print(nt)
             }
         }
-        finalSequencer.setTempo(GlobalMusicProperties.musicBPM)
         
-
-
       
     }// funcEnd
     

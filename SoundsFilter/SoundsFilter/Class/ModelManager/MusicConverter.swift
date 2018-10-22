@@ -90,6 +90,11 @@ class MusicConverter: NSObject {
             }
         }
         
+        if index >= GlobalMusicProperties.PitchFrequencyModelArray.count {
+            index = index - 1
+            
+        }
+        
         let prevModel = GlobalMusicProperties.PitchFrequencyModelArray[index - 1]
         let nextModel = GlobalMusicProperties.PitchFrequencyModelArray[index]
         
@@ -101,7 +106,7 @@ class MusicConverter: NSObject {
             
             return nextModel.pitchName
         }
-
+        
     }// funcEnd
     
     /// 给定一个频率 求其纵坐标高
@@ -118,30 +123,39 @@ class MusicConverter: NSObject {
             }
         }
         
-        let prevModel = GlobalMusicProperties.PitchFrequencyModelArray[index - 1]
-        let nextModel = GlobalMusicProperties.PitchFrequencyModelArray[index]
-        
-        // 第几个八度
-        let scale = ToolClass.cutStringWithPlaces(prevModel.pitchName, startPlace: prevModel.pitchName.count - 1, endPlace: prevModel.pitchName.count)
-        
-        // 音名
-        let musicalAlphabet = ToolClass.cutStringWithPlaces(prevModel.pitchName, startPlace: 0, endPlace: prevModel.pitchName.count - 1)
-        
-        var noteNamesIndex: Double = 0
-        for noteNames in GlobalMusicProperties.NoteNamesWithSharps {
-            if musicalAlphabet == noteNames {
-                break
+        if index == 0 {
+            return 0
+            
+        }else {
+            
+            let prevModel = GlobalMusicProperties.PitchFrequencyModelArray[index - 1]
+            let nextModel = GlobalMusicProperties.PitchFrequencyModelArray[index]
+            
+            // 第几个八度
+            let scale = ToolClass.cutStringWithPlaces(prevModel.pitchName, startPlace: prevModel.pitchName.count - 1, endPlace: prevModel.pitchName.count)
+            
+            // 音名
+            let musicalAlphabet = ToolClass.cutStringWithPlaces(prevModel.pitchName, startPlace: 0, endPlace: prevModel.pitchName.count - 1)
+            
+            var noteNamesIndex: Double = 0
+            for noteNames in GlobalMusicProperties.NoteNamesWithSharps {
+                if musicalAlphabet == noteNames {
+                    break
+                }
+                
+                noteNamesIndex += 1
+                
             }
             
-            noteNamesIndex += 1
+            let scaleLength = Double(GlobalMusicProperties.NoteNamesWithSharps.count * Int(scale)!) + noteNamesIndex
+            
+            
+            
+            return scaleLength + (frequency - prevModel.fequency) / (nextModel.fequency - prevModel.fequency)
             
         }
         
-        let scaleLength = Double(GlobalMusicProperties.NoteNamesWithSharps.count * Int(scale)!) + noteNamesIndex
         
-        
-        
-        return scaleLength + (frequency - prevModel.fequency) / (nextModel.fequency - prevModel.fequency)
         
     }// funcEnd
     

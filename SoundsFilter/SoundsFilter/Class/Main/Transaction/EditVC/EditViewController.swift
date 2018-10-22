@@ -224,8 +224,6 @@ extension EditViewController {
         
         self.finalChordNameArray = finalChordNameArray
         
-        AudioKitLogger.initializeSequencer(finalChordNameArray: self.finalChordNameArray)
-        
         
         
         
@@ -362,19 +360,20 @@ extension EditViewController {
         case .Initial:
             self.recordStatus = .Playing
             self.playButton.setImage(UIImage.init(named: StaticProperties.ImageName.stopPlaying.rawValue), for: .normal)
-            AudioKitLogger.playFile()
             
             PlayerTimer.initializeTimer()
+            AudioKitLogger.initializeSequencer(finalChordNameArray: self.finalChordNameArray)
             
-            self.playProgressBar!.cursorAnimation()
-            
+            AudioKitLogger.playFile(action: {
+                self.playProgressBar!.cursorAnimation()
+            })
             
         case .Playing:
             self.recordStatus = .Initial
             self.playButton.setImage(UIImage.init(named: StaticProperties.ImageName.play.rawValue), for: .normal)
+            
             AudioKitLogger.stopPlayingFile()
             PlayerTimer.destroyTimer()
-            
             self.playProgressBar!.cursorCancelAnimation()
         }
         

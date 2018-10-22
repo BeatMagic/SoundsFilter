@@ -22,7 +22,7 @@ class EquationView: UIView {
         var frequencyArray: [String] = []
         
         for frequency in yArray {
-            frequencyArray.append(MusicConverter.getApproximatePitch(frequency: frequency))
+//            frequencyArray.append(MusicConverter.getApproximatePitch(frequency: frequency))
         }
         
         
