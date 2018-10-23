@@ -19,6 +19,8 @@ class EditViewController: UIViewController {
     /// 调整之后的数组
     private var finalNoteArray: [NoteModel] = []
     
+    private var firstFrequencyModelArray: [FrequencyDurationModel] = []
+    
     /// 大调名
     private var majorName: String = ""
     
@@ -31,8 +33,8 @@ class EditViewController: UIViewController {
         didSet {
             if let playProgressBar = self.playProgressBar {
                 self.view.addSubview(playProgressBar)
-            }
 
+            }
         }
     }
     
@@ -87,6 +89,9 @@ class EditViewController: UIViewController {
         
         if let totalTime = AudioKitLogger.getAudioFileTotalTime() {
             self.playProgressBar = PlayProgressBar.init(totalTimeLength: totalTime)
+            self.playProgressBar!.didSetBracketsLoctionAction = {
+                self.matchSelectSectionsMajor()
+            }
         }
         
         
@@ -117,7 +122,16 @@ class EditViewController: UIViewController {
         AudioKitLogger.setPlayerCompletionHandler {
             
         }
+        
+        if self.recordStatus == .Playing {
+            self.clickRecordButtonEvent()
+            
+        }
     }
+    
+    
+    
+    
 
 }
 
@@ -125,15 +139,8 @@ class EditViewController: UIViewController {
 extension EditViewController {
     func setData() -> Void {
         self.finalNoteArray = self.processFrequencyArray()
-        
-        
-        
-        // 获取近似大调
-        let majorName = GlobalMusicProperties.getApproximateMajor(noteModelArray: self.finalNoteArray)
-        
         // 第一步提纯
-        let firstFrequencyModelArray = MusicConverter.purifyFrequencyModel(frequencyArray: GlobalMusicProperties.recordFrequencyArray)
-        
+        self.firstFrequencyModelArray = MusicConverter.purifyFrequencyModel(frequencyArray: GlobalMusicProperties.recordFrequencyArray)
         
         for finalNote in self.finalNoteArray {
             let startTime = finalNote.startTime
@@ -141,15 +148,14 @@ extension EditViewController {
             var tmpFrequencyModelarray: [FrequencyDurationModel] = []
             
             
-            
-            for frequencyModel in firstFrequencyModelArray {
+            for frequencyModel in self.firstFrequencyModelArray {
                 if frequencyModel.startTime! >= startTime!
                     && frequencyModel.endTime! <= endTime {
                     
                     tmpFrequencyModelarray.append(frequencyModel)
                     
                 }
-
+                
             }
             
             GlobalMusicProperties.frequencyModelArray.append(tmpFrequencyModelarray)
@@ -157,85 +163,140 @@ extension EditViewController {
             
         }
         
-        let frequencyModelArrayWithTime = GlobalMusicProperties.frequencyModelArray
-        
-        var adjustIndexArray: [Double] = []
-        
-        var timelineArray: [(Double, Double)] = []
-        
-        var finalPitchNoteArray: [NoteModel] = []
-        
-        for index in 0 ..< self.finalNoteArray.count {
-            let frequencyModelArray = frequencyModelArrayWithTime[index]
-            let noteModel = self.finalNoteArray[index]
-            
-            
-            var summation = 0.0
-            for frequencyModel in frequencyModelArray {
-                summation += MusicConverter.getFrameY(frequency: frequencyModel.frequency)
-                
-            }
-            // 纵坐标平均数
-            let average = summation / Double(frequencyModelArray.count)
-            
-            // 近似大调音名
-            let finalPitch = GlobalMusicProperties.getNearestMajorPitch(majorName: majorName, pitchName: noteModel.pitchName)
-            
-            
-            
-            
-            let finalPitchName = ToolClass.cutStringWithPlaces(finalPitch, startPlace: 0, endPlace: finalPitch.count - 1)
-            
-            finalPitchNoteArray.append(NoteModel.init(
-                pitchName: finalPitchName,
-                startTime: noteModel.startTime,
-                duration: noteModel.duration
-            ))
-            
-            let finalPitchNameIndex = GlobalMusicProperties.getPitchIndex(pitchName: finalPitchName)
-            
-            if finalPitchNameIndex != nil {
-                
-                let standardFrequency = MusicConverter.getFrequencyFrom(pitchName: finalPitch)
-                let adjustIndex = MusicConverter.getFrameY(frequency: standardFrequency) - average
-                
-                adjustIndexArray.append(adjustIndex)
-                timelineArray.append((noteModel.startTime, noteModel.getEndTime()))
-            }
-            
-        }
-        
-        GlobalMusicProperties.adjustIndexArray = adjustIndexArray
-        GlobalMusicProperties.timelineArray = timelineArray
-        
-        self.finalNoteArray = finalPitchNoteArray
-        self.majorName = majorName
-        
-        let preliminaryChordNameArray = GlobalMusicProperties.getChordFrom(majorName: majorName, noteModelArray: finalPitchNoteArray)
-        print(preliminaryChordNameArray)
-        
-        var finalChordNameArray: [String] = []
-        
-        for index in 0 ..< preliminaryChordNameArray.count {
-            let preliminaryChordName = preliminaryChordNameArray[index]
-            
-            finalChordNameArray.append("\(preliminaryChordName)_\(index % 8 + 1)")
-            
-            
-        }
-        
-        self.finalChordNameArray = finalChordNameArray
-        
-        
-        
-        
     }
     
     func setUI() -> Void {
         self.navigationItem.leftBarButtonItem = self.backButtonItem
         self.playButton.tag = 1
         
+        
+        
     }
+    
+    /// 计算选中小节大调并存储
+    func matchSelectSectionsMajor() -> Void {
+        if let bracketsSelectedTime = GlobalMusicProperties.bracketsSelectedTime {
+            
+            if bracketsSelectedTime.upperBound ==  bracketsSelectedTime.lowerBound {
+                return
+                
+            }
+            
+            var selecetNoteArray: [NoteModel] = []
+            for index in 0 ..< self.finalNoteArray.count {
+                
+                let finalNoteModel = self.finalNoteArray[index]
+                
+                if bracketsSelectedTime.contains(finalNoteModel.getEndTime()) {
+                    selecetNoteArray.append(finalNoteModel)
+                    
+                }
+                
+            }
+            
+            
+            // 获取近似大调
+            let thisTimeMajorName = GlobalMusicProperties.getApproximateMajor(noteModelArray: selecetNoteArray)
+            
+            
+            let frequencyModelArrayWithTime = GlobalMusicProperties.frequencyModelArray
+            
+            var adjustIndexArray: [Double] = []
+            
+            var timelineArray: [(Double, Double)] = []
+            
+            var finalPitchNoteArray: [NoteModel] = []
+            
+            let queueGroup = DispatchGroup.init()
+            
+            let calculatQueue = DispatchQueue(label: "calculatQueue")
+            calculatQueue.async(group: queueGroup, execute: {
+                
+                for selecetNoteIndex in 0 ..< selecetNoteArray.count {
+                    let selecetNote = selecetNoteArray[selecetNoteIndex]
+                    
+                    for finalNoteIndex in 0 ..< self.finalNoteArray.count {
+                        let frequencyModelArray = frequencyModelArrayWithTime[finalNoteIndex]
+                        // 找到对应的频率数组
+                        if frequencyModelArray.first!.startTime == selecetNote.startTime {
+                            
+                            var summation = 0.0
+                            for frequencyModel in frequencyModelArray {
+                                summation += MusicConverter.getFrameY(frequency: frequencyModel.frequency
+                                )
+                                
+                            }
+                            // 纵坐标平均数
+                            let average = summation / Double(frequencyModelArray.count)
+                            
+                            if selecetNote.pitchName.count <= 2 {
+                                print(selecetNote.pitchName)
+                                print(selecetNote.startTime)
+                                print(selecetNote.duration)
+                                print(selecetNote.getEndTime())
+                                
+                            }
+                            
+                            
+                            // 近似大调音阶
+                            let finalPitch = GlobalMusicProperties.getNearestMajorPitch(majorName: thisTimeMajorName, pitchName: selecetNote.pitchName)
+                            
+                            // 近似大调音名
+                            let finalPitchName = ToolClass.cutStringWithPlaces(finalPitch, startPlace: 0, endPlace: finalPitch.count - 1)
+                            
+                            finalPitchNoteArray.append(NoteModel.init(
+                                pitchName: finalPitchName,
+                                startTime: selecetNote.startTime,
+                                duration: selecetNote.duration
+                            ))
+                            
+                            let finalPitchNameIndex = GlobalMusicProperties.getPitchIndex(pitchName: finalPitchName)
+                            
+                            if finalPitchNameIndex != nil {
+                                
+                                let standardFrequency = MusicConverter.getFrequencyFrom(pitchName: finalPitch)
+                                let adjustIndex = MusicConverter.getFrameY(frequency: standardFrequency) - average
+                                
+                                adjustIndexArray.append(adjustIndex)
+                                timelineArray.append((selecetNote.startTime, selecetNote.getEndTime()))
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                    
+                }
+                
+            })
+            
+            queueGroup.notify(queue: DispatchQueue.main) {
+                
+                GlobalMusicProperties.adjustIndexArray = adjustIndexArray
+                GlobalMusicProperties.timelineArray = timelineArray
+                
+                self.finalNoteArray = finalPitchNoteArray
+                self.majorName = thisTimeMajorName
+                
+                let preliminaryChordNameArray = GlobalMusicProperties.getChordFrom(majorName: self.majorName, noteModelArray: finalPitchNoteArray)
+                print(preliminaryChordNameArray)
+                
+                var finalChordNameArray: [String] = []
+                
+                for index in 0 ..< preliminaryChordNameArray.count {
+                    let preliminaryChordName = preliminaryChordNameArray[index]
+                    
+                    finalChordNameArray.append("\(preliminaryChordName)_\(index % 8 + 1)")
+                    
+                    
+                }
+                
+                self.finalChordNameArray = finalChordNameArray
+                
+            }
+        }
+        
+    }// funcEnd
     
     /// 对频率数组做出处理
     func processFrequencyArray() -> [NoteModel] {
@@ -288,60 +349,6 @@ extension EditViewController {
             }
         }
         
-        
-    
-        
-
-        
-//        for var index in 0 ..< noteModelArray.count {
-//            if index >= noteModelArray.count {
-//                break
-//
-//            }
-//
-//            let noteModel = noteModelArray[index]
-//
-//            if noteModel.duration <= GlobalMusicProperties.getMinNoteDuration() {
-//
-//                if index != 0 && index != noteModelArray.count - 1 {
-//
-//                    if let prevNoteModel = resultModelArray.last {
-//
-//                        let nextNoteModel = noteModelArray[index + 1]
-//
-//                        if prevNoteModel.pitchName == nextNoteModel.pitchName {
-//                            let mergeNoteModel = NoteModel.init(
-//                                pitchName: prevNoteModel.pitchName,
-//                                startTime: prevNoteModel.startTime,
-//                                duration: prevNoteModel.duration + noteModel.duration + nextNoteModel.duration
-//                            )
-//
-//                            noteModelArray.replaceSubrange(index - 1 ..< index, with: repeatElement(mergeNoteModel, count: 1))
-//
-//                            noteModelArray.remove(at: index)
-//                            noteModelArray.remove(at: index + 1)
-//
-//                            index += 1
-//                        }
-//
-//                    }
-//
-//                    let prevNoteModel = noteModelArray[index - 1]
-//
-//
-//                }
-//
-//            }else {
-//                resultModelArray.append(noteModel)
-//
-//            }
-//
-//            index += 1
-//
-//
-//        }
-
-        
         return resultModelArray
     }// funcEnd
 }
@@ -360,11 +367,14 @@ extension EditViewController {
     @objc func clickRecordButtonEvent() -> Void {
         switch self.recordStatus {
         case .Initial:
+            AudioKitLogger.initializeSequencer(finalChordNameArray: self.finalChordNameArray)
+            
+            
             self.recordStatus = .Playing
             self.playButton.setImage(UIImage.init(named: StaticProperties.ImageName.stopPlaying.rawValue), for: .normal)
             
+            
             PlayerTimer.initializeTimer()
-            AudioKitLogger.initializeSequencer(finalChordNameArray: self.finalChordNameArray)
             
             AudioKitLogger.playFile(action: {
                 self.playProgressBar!.cursorAnimation()

@@ -48,7 +48,7 @@ extension PlayerTimer {
             self.timelineArray = GlobalMusicProperties.timelineArray
             self.adjustIndexArray = GlobalMusicProperties.adjustIndexArray
 
-            let timeInterval = GlobalMusicProperties.getDetectFrequencyDuration()
+            let timeInterval = GlobalMusicProperties.getDetectFrequencyDuration() / 10
             
             let tmpTimer = DispatchSource.makeTimerSource()
             tmpTimer.schedule(deadline: DispatchTime.now(),
@@ -75,10 +75,18 @@ extension PlayerTimer {
                         
                         
                     }
+
                     
-                    
-                    
-                    
+                    if let bracketsSelectedTime = GlobalMusicProperties.bracketsSelectedTime {
+                        
+                        if bracketsSelectedTime.contains(self.currentTime) == true {
+                            AudioKitLogger.samplerMixer!.volume = 1.0
+                            
+                        }else {
+                            AudioKitLogger.samplerMixer!.volume = 0
+                            
+                        }
+                    }
                 }
                 
                 self.repeatCount += 1
@@ -106,25 +114,31 @@ extension PlayerTimer {
             
         }
         
+
+        
         self.shared = nil
         
     }
     
     /// 判断是否需要调音
     static func isNeedTuning() -> Int? {
-        for index in 0 ..< self.timelineArray.count {
-            
-            if self.currentTime >= self.timelineArray[index].0
-                &&
-                self.currentTime <= self.timelineArray[index].1
-                &&
-                GlobalMusicProperties.bracketsSelectedTime.contains(self.currentTime) == true {
+        
+        if let bracketsSelectedTime = GlobalMusicProperties.bracketsSelectedTime {
+            for index in 0 ..< self.timelineArray.count {
                 
-                return index
+                if self.currentTime >= self.timelineArray[index].0
+                    &&
+                    self.currentTime <= self.timelineArray[index].1
+                    &&
+                    bracketsSelectedTime.contains(self.currentTime) == true {
+                    
+                    return index
+                }
+                
             }
             
         }
-
+        
         return nil
 
     }// funcEnd

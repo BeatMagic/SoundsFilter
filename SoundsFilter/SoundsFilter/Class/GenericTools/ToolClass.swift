@@ -81,10 +81,16 @@ public class ToolClass: NSObject {
     
     /// 3.2 字符串的剪切与拼接
     static func cutStringWithPlaces(_ dealString: String, startPlace: Int, endPlace: Int) -> String {
-        let startIndex = dealString.index(dealString.startIndex, offsetBy: startPlace)
-        let endIndex = dealString.index(startIndex, offsetBy: endPlace - startPlace)
+        if dealString == "" {
+            return ""
+            
+        }else {
+            let startIndex = dealString.index(dealString.startIndex, offsetBy: startPlace)
+            let endIndex = dealString.index(startIndex, offsetBy: endPlace - startPlace)
+            
+            return String(dealString[startIndex ..< endIndex])
+        }
         
-        return String(dealString[startIndex ..< endIndex])
     }
     
     // MARK: - GCD相关

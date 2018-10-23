@@ -9,13 +9,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SoundsFilter/Class/Main/Transaction/EditVC/EditViewController.swift"
-            timestampString = "561978747.192484"
+            filePath = "SoundsFilter/Class/BasicClass/View/PlayProgressBar.swift"
+            timestampString = "561999312.890053"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "208"
-            endingLineNumber = "208"
-            landmarkName = "setData()"
+            startingLineNumber = "287"
+            endingLineNumber = "287"
+            landmarkName = "getNearestBrackets(point:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -25,94 +25,14 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SoundsFilter/Class/Model/GlobalMusicProperties.swift"
-            timestampString = "561978747.19279"
+            filePath = "SoundsFilter/Class/BasicClass/View/PlayProgressBar.swift"
+            timestampString = "561999312.8903511"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "403"
-            endingLineNumber = "403"
-            landmarkName = "getChordFrom(majorName:noteModelArray:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SoundsFilter/Class/Model/GlobalMusicProperties.swift"
-            timestampString = "561978747.192994"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "432"
-            endingLineNumber = "432"
-            landmarkName = "getChordFrom(majorName:noteModelArray:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "static SoundsFilter.GlobalMusicProperties.getChordFrom(majorName: Swift.String, noteModelArray: Swift.Array&lt;SoundsFilter.NoteModel&gt;) -&gt; Swift.Array&lt;Swift.String&gt;"
-                  moduleName = "SoundsFilter"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/BGYoung/Desktop/Github/SoundsFilter/SoundsFilter/SoundsFilter/Class/Model/GlobalMusicProperties.swift"
-                  timestampString = "561978364.351302"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "432"
-                  endingLineNumber = "432"
-                  offsetFromSymbolStart = "2564">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; Swift.Optional&lt;SoundsFilter.MajorUnknownChordModel&gt; in static SoundsFilter.GlobalMusicProperties.getChordFrom(majorName: Swift.String, noteModelArray: Swift.Array&lt;SoundsFilter.NoteModel&gt;) -&gt; Swift.Array&lt;Swift.String&gt;"
-                  moduleName = "SoundsFilter"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/BGYoung/Desktop/Github/SoundsFilter/SoundsFilter/SoundsFilter/Class/Model/GlobalMusicProperties.swift"
-                  timestampString = "561978364.353122"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "433"
-                  endingLineNumber = "433"
-                  offsetFromSymbolStart = "44">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SoundsFilter/Class/Model/GlobalMusicProperties.swift"
-            timestampString = "561978747.193048"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "445"
-            endingLineNumber = "445"
-            landmarkName = "getChordFrom(majorName:noteModelArray:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SoundsFilter/Class/Model/GlobalMusicProperties.swift"
-            timestampString = "561978747.193096"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "485"
-            endingLineNumber = "485"
-            landmarkName = "getChordFrom(majorName:noteModelArray:)"
-            landmarkType = "7">
+            startingLineNumber = "44"
+            endingLineNumber = "44"
+            landmarkName = "bracketsLoction"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

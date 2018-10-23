@@ -101,7 +101,7 @@ extension GlobalMusicProperties {
     static var timelineArray: [(Double, Double)] = []
     
     /// 括号选定前后时间
-    static var bracketsSelectedTime: ClosedRange<Double> = 0 ... 1
+    static var bracketsSelectedTime: ClosedRange<Double>? = nil
 }
 
 // MARK: - 静态数据
@@ -244,9 +244,9 @@ extension GlobalMusicProperties {
         
         let majorPitchArray = MajorPitchDict[majorName]!
         
-        let scale = ToolClass.cutStringWithPlaces(pitchName, startPlace: 0, endPlace: pitchName.count - 1)
         let octaveCount = Int(ToolClass.cutStringWithPlaces(pitchName, startPlace: pitchName.count - 1, endPlace: pitchName.count))!
-        
+        let scale = ToolClass.cutStringWithPlaces(pitchName, startPlace: 0, endPlace: pitchName.count - 1)
+
         
         if majorPitchArray.contains(scale) {
             return pitchName

@@ -36,17 +36,41 @@ class PlayProgressBar: UIView {
         }
     }
     
+    private var isNeedEdit = true
+    
     // MARK: - 记录
     /// 记录括号位置数组
     private var bracketsLoction: [Double] = [0, GlobalMusicProperties.timeDifferenceFromNowToNextBeat] {
         didSet {
             GlobalMusicProperties.bracketsSelectedTime = bracketsLoction[0] ... bracketsLoction[1]
             
+            if let action = didSetBracketsLoctionAction {
+                
+                if isNeedEdit == true {
+                    
+                    let queueGroup = DispatchGroup.init()
+                    
+                    let basicQueue = DispatchQueue(label: "???basicQueue")
+                    basicQueue.async(group: queueGroup, execute: {
+                        action()
+                    })
+                    
+                    queueGroup.notify(queue: DispatchQueue.main) {
+                        self.isNeedEdit = false
+                    }
+                    
+                }
+                
+            }
         }
     }
     
+    /// 设置括号位置数组后做的事
+    var didSetBracketsLoctionAction: (() -> Void?)? = nil
+
     /// 记录线横坐标的的数组
     private var sectionLineXArray: [CGFloat] = []
+    
     
     private let totalTime: Double!
     

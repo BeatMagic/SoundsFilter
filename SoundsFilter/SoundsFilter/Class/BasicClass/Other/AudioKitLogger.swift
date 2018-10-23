@@ -32,12 +32,6 @@ class AudioKitLogger: NSObject {
     static private let silence = AKBooster(tracker, gain: 0)
     
     // MARK: - 记录相关
-    /// 麦克混合器
-    static private let micMixer: AKMixer = AKMixer(mic)
-    
-    /// 麦克加速器
-    static private let micBooster: AKBooster = AKBooster(micMixer)
-    
     /// 记录器
     static private var recorder: AKNodeRecorder?
     
@@ -56,15 +50,16 @@ class AudioKitLogger: NSObject {
     /// 调音需要
     static private var pitchShifter: AKPitchShifter?
     
-    
+    /// Sequencer
     static private var finalSequencer: AKSequencer?
+    
+    /// sampler混合器
+    static var samplerMixer: AKMixer?
+    
     /// 播放混合器
     static private var playMixer: AKMixer = AKMixer.init()
     
     static private var midiSamplerArray: [AKMIDISampler] = []
-
-    
-    
     
 }
 
@@ -83,10 +78,9 @@ extension AudioKitLogger {
             }
             
             // 初始设置
-            AKSettings.defaultToSpeaker = true
-            micBooster.gain = 0
+            AKSettings.defaultToSpeaker = false
             
-            self.recorder = try! AKNodeRecorder(node: micMixer)
+            self.recorder = try! AKNodeRecorder(node: mic)
             
             if let file = recorder!.audioFile {
                 self.player = AKPlayer(audioFile: file)
@@ -102,7 +96,7 @@ extension AudioKitLogger {
             let moogLadder = AKMoogLadder.init(self.playMixer, cutoffFrequency: 5000
                 , resonance: 0.5)
             
-            self.mainMixer = AKMixer(micBooster, silence, moogLadder)
+            self.mainMixer = AKMixer(silence, moogLadder)
 
             AudioKit.output = mainMixer!
             
@@ -203,10 +197,6 @@ extension AudioKitLogger {
         
         self.audioKitQueue.async {
             
-            
-            if AKSettings.headPhonesPlugged {
-                micBooster.gain = 1
-            }
             do {
                 try recorder!.record()
             } catch { AKLog("Errored recording.") }
@@ -215,6 +205,7 @@ extension AudioKitLogger {
     
     /// 停止录制并返回文件名
     static func stopRecording() -> Void {
+        
         self.tape = self.recorder!.audioFile!
         self.player!.load(audioFile: self.tape!)
         
@@ -231,6 +222,13 @@ extension AudioKitLogger {
             }
         }
         
+        
+        try! AudioKit.stop()
+        
+        AKSettings.defaultToSpeaker = true
+        
+        try! AudioKit.start()
+        
     }
     
     
@@ -238,10 +236,12 @@ extension AudioKitLogger {
     /// 播放录制好的文件
     static func playFile(action: @escaping (() -> Void)) -> Void {
         
-        finalSequencer!.play()
         
         
-        let delayTime = GlobalMusicProperties.getSectionDuration() - GlobalMusicProperties.timeDifferenceFromNowToNextBeat
+        self.finalSequencer!.play()
+        
+        
+        let delayTime = GlobalMusicProperties.getBeatDuration() - GlobalMusicProperties.timeDifferenceFromNowToNextBeat
         
         DelayTask.createTaskWith(workItem: {
             self.player!.play()
@@ -270,6 +270,7 @@ extension AudioKitLogger {
     /// 初始化Sequencer
     static func initializeSequencer(finalChordNameArray: [String]) -> Void {
         self.finalSequencer = AKSequencer.init()
+        self.samplerMixer = AKMixer.init()
         
         let toneNumArray = [50, 4, 33, 5, 108, 90, 101, 9]
         let volumeArray = [0, 0.95, 0.97, 0.95, 0.15, 0.45, 0.20, 0.25]
@@ -293,11 +294,15 @@ extension AudioKitLogger {
             _ = finalSequencer!.newTrack()
             finalSequencer!.tracks[index].setMIDIOutput(sampler.midiIn)
             
-            playMixer.connect(input: sampler)
+            
+            self.samplerMixer!.connect(input: sampler)
             
             self.midiSamplerArray.append(sampler)
             
         }
+        
+        
+        playMixer.connect(input: self.samplerMixer!)
         
         var lastClipBeats = 0.0
         finalSequencer!.setLength(AKDuration(beats: 4 * finalChordNameArray.count))
@@ -320,8 +325,7 @@ extension AudioKitLogger {
                     var setNoteData = noteData
                     let oldBeat = noteData.position.beats
                     let newBeat = oldBeat + lastClipBeats
-                    setNoteData.channel = 1
-                    setNoteData.position = AKDuration(beats: newBeat)//, tempo:GlobalMusicProperties.musicBPM)
+                    setNoteData.position = AKDuration(beats: newBeat)
                     tracks[trackIndex].add(midiNoteData: setNoteData)
                 }
             }
