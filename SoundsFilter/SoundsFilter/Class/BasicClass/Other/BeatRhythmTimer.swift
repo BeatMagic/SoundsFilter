@@ -47,7 +47,7 @@ extension BeatRhythmTimer {
     static func initializeBeatRhythmTimer() -> Void {
         
         beatQueue.async {
-            let duration = GlobalMusicProperties.getBeatDuration() / 5
+            let duration = GlobalMusicProperties.getBeatDuration() / 20
             
             let tmpTimer = DispatchSource.makeTimerSource()
             tmpTimer.schedule(deadline: DispatchTime.now(),
@@ -62,12 +62,9 @@ extension BeatRhythmTimer {
                 
                 self.repeatCount += 1
                 
-                if (self.repeatCount - 1) % 5 == 0  {
+                if (self.repeatCount - 1) % 20 == 0 {
                     beatPlayer.play()
-                    beatPlayer.currentTime = 0
-                    
                 }
-                
                 
             }
             

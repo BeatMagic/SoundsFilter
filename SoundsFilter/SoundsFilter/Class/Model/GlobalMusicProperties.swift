@@ -11,7 +11,7 @@ import UIKit
 // MARK: - BPM相关
 class GlobalMusicProperties: NSObject {
     /// 速度
-    static var musicBPM: Double = 120 {
+    static var musicBPM: Double = 80 {
         didSet {
             if musicBPM > 140 {
                 musicBPM = 140

@@ -9,13 +9,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SoundsFilter/Class/BasicClass/View/PlayProgressBar.swift"
-            timestampString = "561999312.890053"
+            filePath = "SoundsFilter/Class/BasicClass/Other/PlayerTimer.swift"
+            timestampString = "562015805.434868"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "287"
-            endingLineNumber = "287"
-            landmarkName = "getNearestBrackets(point:)"
+            startingLineNumber = "86"
+            endingLineNumber = "86"
+            landmarkName = "initializeTimer()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -25,14 +25,14 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SoundsFilter/Class/BasicClass/View/PlayProgressBar.swift"
-            timestampString = "561999312.8903511"
+            filePath = "SoundsFilter/Class/Main/Transaction/EditVC/EditViewController.swift"
+            timestampString = "562015805.435147"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "44"
-            endingLineNumber = "44"
-            landmarkName = "bracketsLoction"
-            landmarkType = "24">
+            startingLineNumber = "361"
+            endingLineNumber = "361"
+            landmarkName = "clickRecordButtonEvent()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

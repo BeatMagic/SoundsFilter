@@ -17,28 +17,20 @@ class NoteModel: NSObject {
     let startTime: Double!
     
     /// 持续时间
-    var duration: Double = 0 {
-        didSet {
-            self.endTime = self.startTime + duration
-        }
-    }
-    
-    /// 结束时间
-    private var endTime: Double = 0
+    var duration: Double!
 
     init(pitchName: String!, startTime: Double!, duration: Double) {
         self.pitchName = pitchName
         self.startTime = startTime
-        super.init()
-        
         self.duration = duration
         
-        
+        super.init()
+
     }
     
     /// 获取结束时间
     func getEndTime() -> Double {
-        return self.endTime
+        return self.startTime + self.duration
         
     }// funcEnd
 }

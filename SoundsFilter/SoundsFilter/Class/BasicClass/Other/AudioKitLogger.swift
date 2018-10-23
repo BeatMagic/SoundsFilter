@@ -235,13 +235,11 @@ extension AudioKitLogger {
     
     /// 播放录制好的文件
     static func playFile(action: @escaping (() -> Void)) -> Void {
-        
-        
-        
+        PlayerTimer.initializeTimer()
+        AudioKitLogger.samplerMixer!.volume = 0
         self.finalSequencer!.play()
         
-        
-        let delayTime = GlobalMusicProperties.getBeatDuration() - GlobalMusicProperties.timeDifferenceFromNowToNextBeat
+        let delayTime = GlobalMusicProperties.getSectionDuration() - GlobalMusicProperties.timeDifferenceFromNowToNextBeat
         
         DelayTask.createTaskWith(workItem: {
             self.player!.play()
@@ -253,8 +251,12 @@ extension AudioKitLogger {
     
     /// 停止播放
     static func stopPlayingFile() -> Void {
+        
         self.player!.stop()
+        PlayerTimer.destroyTimer()
         self.finalSequencer!.stop()
+        self.finalSequencer!.rewind()
+        
         self.finalSequencer = nil
         DelayTask.cancelAllWorkItems()
     }
@@ -272,8 +274,8 @@ extension AudioKitLogger {
         self.finalSequencer = AKSequencer.init()
         self.samplerMixer = AKMixer.init()
         
-        let toneNumArray = [50, 4, 33, 5, 108, 90, 101, 9]
-        let volumeArray = [0, 0.95, 0.97, 0.95, 0.15, 0.45, 0.20, 0.25]
+        let toneNumArray = [50, 0, 89]
+        let amplitudeArray = [-90, -12.9, -21.3]
         
         
         
@@ -282,13 +284,17 @@ extension AudioKitLogger {
             let sampler = AKMIDISampler()
             
             if index == 1 {
-                try! sampler.loadMelodicSoundFont("TR-808Drums", preset: toneNumArray[index])
+                try! sampler.loadMelodicSoundFont("GeneralUserPiano", preset: toneNumArray[index])
+                
                 
             }else {
                 try! sampler.loadMelodicSoundFont("GeneralUser", preset: toneNumArray[index])
                 
             }
-            sampler.volume = volumeArray[index]
+            
+            
+            
+            sampler.amplitude = amplitudeArray[index]
             
             
             _ = finalSequencer!.newTrack()
@@ -316,7 +322,7 @@ extension AudioKitLogger {
             
             let tempTracks = temp.tracks
             let tracks = finalSequencer!.tracks
-            assert(tempTracks.count==tracks.count)
+            assert(tempTracks.count == tracks.count)
             for trackIndex in 0 ..< tracks.count {
                 
                 let noteDataArray = tempTracks[trackIndex].getMIDINoteData()

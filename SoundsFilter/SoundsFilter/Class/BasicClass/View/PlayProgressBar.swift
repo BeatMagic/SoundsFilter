@@ -42,26 +42,18 @@ class PlayProgressBar: UIView {
     /// 记录括号位置数组
     private var bracketsLoction: [Double] = [0, GlobalMusicProperties.timeDifferenceFromNowToNextBeat] {
         didSet {
-            GlobalMusicProperties.bracketsSelectedTime = bracketsLoction[0] ... bracketsLoction[1]
-            
-            if let action = didSetBracketsLoctionAction {
+            if oldValue != bracketsLoction {
+                GlobalMusicProperties.bracketsSelectedTime = bracketsLoction[0] ... bracketsLoction[1]
                 
-                if isNeedEdit == true {
+                if let action = didSetBracketsLoctionAction {
                     
-                    let queueGroup = DispatchGroup.init()
-                    
-                    let basicQueue = DispatchQueue(label: "???basicQueue")
-                    basicQueue.async(group: queueGroup, execute: {
-                        action()
-                    })
-                    
-                    queueGroup.notify(queue: DispatchQueue.main) {
-                        self.isNeedEdit = false
-                    }
+                    action()
                     
                 }
                 
             }
+            
+            
         }
     }
     
@@ -309,15 +301,15 @@ extension PlayProgressBar {
 // MARK: - 重载Touch事件
 extension PlayProgressBar {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for touch in touches {
-            self.getNearestBrackets(point: touch.location(in: self))
-        }
+//        for touch in touches {
+//            self.getNearestBrackets(point: touch.location(in: self))
+//        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for touch in touches {
-            self.getNearestBrackets(point: touch.location(in: self))
-        }
+//        for touch in touches {
+//            self.getNearestBrackets(point: touch.location(in: self))
+//        }
         
     }
     

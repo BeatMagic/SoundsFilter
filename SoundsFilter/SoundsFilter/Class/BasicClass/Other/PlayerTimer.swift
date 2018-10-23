@@ -48,7 +48,7 @@ extension PlayerTimer {
             self.timelineArray = GlobalMusicProperties.timelineArray
             self.adjustIndexArray = GlobalMusicProperties.adjustIndexArray
 
-            let timeInterval = GlobalMusicProperties.getDetectFrequencyDuration() / 10
+            let timeInterval = GlobalMusicProperties.getDetectFrequencyDuration() / 20
             
             let tmpTimer = DispatchSource.makeTimerSource()
             tmpTimer.schedule(deadline: DispatchTime.now(),
@@ -57,6 +57,8 @@ extension PlayerTimer {
         
             
             tmpTimer.setEventHandler {
+                
+                
                 // 第一次不触发要做的事
                 if self.repeatCount != 0 {
                     self.currentTime += timeInterval
@@ -76,10 +78,11 @@ extension PlayerTimer {
                         
                     }
 
+                    let delay = GlobalMusicProperties.getSectionDuration() - GlobalMusicProperties.timeDifferenceFromNowToNextBeat
                     
                     if let bracketsSelectedTime = GlobalMusicProperties.bracketsSelectedTime {
                         
-                        if bracketsSelectedTime.contains(self.currentTime) == true {
+                        if bracketsSelectedTime.contains(self.currentTime - delay) == true {
                             AudioKitLogger.samplerMixer!.volume = 1.0
                             
                         }else {
@@ -124,13 +127,16 @@ extension PlayerTimer {
     static func isNeedTuning() -> Int? {
         
         if let bracketsSelectedTime = GlobalMusicProperties.bracketsSelectedTime {
+            
+            let delay = GlobalMusicProperties.getSectionDuration() - GlobalMusicProperties.timeDifferenceFromNowToNextBeat
+            
             for index in 0 ..< self.timelineArray.count {
                 
                 if self.currentTime >= self.timelineArray[index].0
                     &&
                     self.currentTime <= self.timelineArray[index].1
                     &&
-                    bracketsSelectedTime.contains(self.currentTime) == true {
+                    bracketsSelectedTime.contains(self.currentTime - delay) == true {
                     
                     return index
                 }

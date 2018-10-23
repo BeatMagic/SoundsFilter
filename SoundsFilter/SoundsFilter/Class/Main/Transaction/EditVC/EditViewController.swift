@@ -175,6 +175,8 @@ extension EditViewController {
     
     /// 计算选中小节大调并存储
     func matchSelectSectionsMajor() -> Void {
+        print("计算选中小节大调并存储")
+        
         if let bracketsSelectedTime = GlobalMusicProperties.bracketsSelectedTime {
             
             if bracketsSelectedTime.upperBound ==  bracketsSelectedTime.lowerBound {
@@ -229,15 +231,6 @@ extension EditViewController {
                             // 纵坐标平均数
                             let average = summation / Double(frequencyModelArray.count)
                             
-                            if selecetNote.pitchName.count <= 2 {
-                                print(selecetNote.pitchName)
-                                print(selecetNote.startTime)
-                                print(selecetNote.duration)
-                                print(selecetNote.getEndTime())
-                                
-                            }
-                            
-                            
                             // 近似大调音阶
                             let finalPitch = GlobalMusicProperties.getNearestMajorPitch(majorName: thisTimeMajorName, pitchName: selecetNote.pitchName)
                             
@@ -286,7 +279,7 @@ extension EditViewController {
                 for index in 0 ..< preliminaryChordNameArray.count {
                     let preliminaryChordName = preliminaryChordNameArray[index]
                     
-                    finalChordNameArray.append("\(preliminaryChordName)_\(index % 8 + 1)")
+                    finalChordNameArray.append("\(preliminaryChordName)_1")
                     
                     
                 }
@@ -322,7 +315,7 @@ extension EditViewController {
                         
                     }else {
                         let model = NoteModel.init(pitchName: frequencyPitchName, startTime: currentTime, duration: GlobalMusicProperties.getDetectFrequencyDuration())
-                        
+                        model.duration = GlobalMusicProperties.getDetectFrequencyDuration()
                         noteModelArray.append(model)
                         
                     }
@@ -374,7 +367,7 @@ extension EditViewController {
             self.playButton.setImage(UIImage.init(named: StaticProperties.ImageName.stopPlaying.rawValue), for: .normal)
             
             
-            PlayerTimer.initializeTimer()
+            
             
             AudioKitLogger.playFile(action: {
                 self.playProgressBar!.cursorAnimation()
@@ -387,7 +380,7 @@ extension EditViewController {
             self.playButton.setImage(UIImage.init(named: StaticProperties.ImageName.play.rawValue), for: .normal)
             
             self.playProgressBar!.cursorCancelAnimation()
-            PlayerTimer.destroyTimer()
+            
         }
         
         
