@@ -97,6 +97,8 @@ extension AudioKitLogger {
             self.pitchShifter = AKPitchShifter.init(self.player!)
             self.pitchShifter!.rampDuration = 0
             
+            self.playMixer.connect(input: pitchShifter)
+            
             self.mainMixer = AKMixer(micBooster, silence)
             
             AudioKit.output = mainMixer!
@@ -232,10 +234,7 @@ extension AudioKitLogger {
     
     /// 播放录制好的文件
     static func playFile(action: @escaping (() -> Void)) -> Void {
-        
-        
-        playMixer.connect(input: pitchShifter)
-        
+
         AudioKit.output = playMixer
         
         finalSequencer!.play()
@@ -244,7 +243,7 @@ extension AudioKitLogger {
         let delayTime = GlobalMusicProperties.getSectionDuration() - GlobalMusicProperties.timeDifferenceFromNowToNextBeat
         
         DelayTask.createTaskWith(workItem: {
-            AudioKitLogger.player!.play()
+            self.player!.play()
             action()
             
         }, delayTime: delayTime)
@@ -253,10 +252,10 @@ extension AudioKitLogger {
     
     /// 停止播放
     static func stopPlayingFile() -> Void {
-        DelayTask.cancelAllWorkItems()
         self.player!.stop()
-        finalSequencer!.stop()
+        self.finalSequencer!.stop()
         self.finalSequencer = nil
+        DelayTask.cancelAllWorkItems()
     }
     
     /// 设置pitchShifter
@@ -271,14 +270,20 @@ extension AudioKitLogger {
     static func initializeSequencer(finalChordNameArray: [String]) -> Void {
         self.finalSequencer = AKSequencer.init()
         
-        let array = [0, 128, 33, 5, 108, 90, 101, 9]
+        let array = [50, 4, 33, 5, 108, 90, 101, 9]
         
         for index in 0 ..< array.count {
             
             let sampler = AKMIDISampler()
             
-//            try! sampler.loadSoundFont("GeneralUser", preset: index, bank: 1)
-            try! sampler.loadMelodicSoundFont("GeneralUser", preset: index)
+            if index == 1 {
+                try! sampler.loadMelodicSoundFont("TR-808Drums", preset: array[index])
+                
+            }else {
+                try! sampler.loadMelodicSoundFont("GeneralUser", preset: array[index])
+                
+            }
+            
             
             
             _ = finalSequencer!.newTrack()

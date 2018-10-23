@@ -320,7 +320,8 @@
 		7CFB8DB2216DDA0C006A6365 /* RecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFB8DB1216DDA0C006A6365 /* RecordViewController.swift */; };
 		7CFB8DB5216E02C2006A6365 /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFB8DB4216E02C2006A6365 /* EditViewController.swift */; };
 		7CFB8DB7216E183E006A6365 /* StaticProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFB8DB6216E183E006A6365 /* StaticProperties.swift */; };
-		7CFB9133217DB106006F90E2 /* GeneralUser.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 7CFB9132217DB106006F90E2 /* GeneralUser.sf2 */; };
+		7CFB9138217EB64C006F90E2 /* GeneralUser.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 7CFB9137217EB64C006F90E2 /* GeneralUser.sf2 */; };
+		7CFB913A217EB652006F90E2 /* TR-808Drums.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 7CFB9139217EB652006F90E2 /* TR-808Drums.sf2 */; };
 		7CFED162216EE6DE009FD60B /* SizeSlideButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFED161216EE6DD009FD60B /* SizeSlideButton.swift */; };
 		7CFED164216EF148009FD60B /* GlobalMusicProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFED163216EF148009FD60B /* GlobalMusicProperties.swift */; };
 		7CFED166216F38F2009FD60B /* GlobalTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFED165216F38F2009FD60B /* GlobalTimer.swift */; };
@@ -644,7 +645,8 @@
 		7CFB8DB1216DDA0C006A6365 /* RecordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordViewController.swift; sourceTree = "<group>"; };
 		7CFB8DB4216E02C2006A6365 /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
 		7CFB8DB6216E183E006A6365 /* StaticProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticProperties.swift; sourceTree = "<group>"; };
-		7CFB9132217DB106006F90E2 /* GeneralUser.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = GeneralUser.sf2; sourceTree = "<group>"; };
+		7CFB9137217EB64C006F90E2 /* GeneralUser.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = GeneralUser.sf2; sourceTree = "<group>"; };
+		7CFB9139217EB652006F90E2 /* TR-808Drums.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TR-808Drums.sf2"; sourceTree = "<group>"; };
 		7CFED161216EE6DD009FD60B /* SizeSlideButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeSlideButton.swift; sourceTree = "<group>"; };
 		7CFED163216EF148009FD60B /* GlobalMusicProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalMusicProperties.swift; sourceTree = "<group>"; };
 		7CFED165216F38F2009FD60B /* GlobalTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalTimer.swift; sourceTree = "<group>"; };
@@ -1444,7 +1446,8 @@
 				7C1B6A402175C36A00B0472C /* ExamplesDefaults.swift */,
 				7CFB8D73216DA3AD006A6365 /* Assets.xcassets */,
 				7CF042BA2171CBBF0076D44B /* beatSound.mp3 */,
-				7CFB9132217DB106006F90E2 /* GeneralUser.sf2 */,
+				7CFB9139217EB652006F90E2 /* TR-808Drums.sf2 */,
+				7CFB9137217EB64C006F90E2 /* GeneralUser.sf2 */,
 				7C1B6A472179CC6B00B0472C /* 神秘民谣_80-90_n=8 */,
 			);
 			name = Resource;
@@ -1699,6 +1702,7 @@
 				7C1B6C4B2179CC6C00B0472C /* B_3.mid in Resources */,
 				7C1B6C8C2179CC6C00B0472C /* D7_4.mid in Resources */,
 				7C1B6C1A2179CC6C00B0472C /* F_7.mid in Resources */,
+				7CFB913A217EB652006F90E2 /* TR-808Drums.sf2 in Resources */,
 				7C1B6C642179CC6C00B0472C /* F7_1.mid in Resources */,
 				7C1B6C462179CC6C00B0472C /* E_8.mid in Resources */,
 				7C1B6BC12179CC6C00B0472C /* Bm_7.mid in Resources */,
@@ -1783,7 +1787,7 @@
 				7C1B6BFF2179CC6C00B0472C /* C#_8.mid in Resources */,
 				7C1B6BAE2179CC6C00B0472C /* G#m_8.mid in Resources */,
 				7C1B6C972179CC6C00B0472C /* G#7_3.mid in Resources */,
-				7CFB9133217DB106006F90E2 /* GeneralUser.sf2 in Resources */,
+				7CFB9138217EB64C006F90E2 /* GeneralUser.sf2 in Resources */,
 				7C1B6C672179CC6C00B0472C /* A7_6.mid in Resources */,
 				7C1B6C882179CC6C00B0472C /* D7_3.mid in Resources */,
 				7C1B6BD22179CC6C00B0472C /* Fm_3.mid in Resources */,
@@ -1865,7 +1869,6 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-SoundsFilter/Pods-SoundsFilter-frameworks.sh",
-				"${PODS_ROOT}/AudioKit/iOS/AudioKitUI.framework",
 				"${BUILT_PRODUCTS_DIR}/ChameleonFramework/ChameleonFramework.framework",
 				"${BUILT_PRODUCTS_DIR}/HGRippleRadarView/HGRippleRadarView.framework",
 				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
@@ -1878,7 +1881,6 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AudioKitUI.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChameleonFramework.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HGRippleRadarView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",

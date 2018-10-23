@@ -61,22 +61,19 @@ extension PlayerTimer {
                 if self.repeatCount != 0 {
                     self.currentTime += timeInterval
                     
-                    if self.isNeedTuning() != nil && isAllowShift == true {
-                        
-                        print("index\(self.isNeedTuning()!)需要调\(self.adjustIndexArray[self.isNeedTuning()!])")
+                    if self.isNeedTuning() != nil && isAllowShift == true { // 需要调音
                         
                         isAllowShift = false
                         AudioKitLogger.setPitchShifter(shift: self.adjustIndexArray[self.isNeedTuning()!] + 1)
                         
-                    }else if self.isNeedTuning() == nil  {
+                    }else if self.isNeedTuning() == nil  { // 不需要调
                         
-                        print("调回圆点")
                         isAllowShift = true
                         AudioKitLogger.setPitchShifter(shift: 1)
                         
-                    }else {
+                    }else { // 在区间内但不调音
                         
-                        print("在区间内但不调音")
+                        
                     }
                     
                     
@@ -117,7 +114,11 @@ extension PlayerTimer {
     static func isNeedTuning() -> Int? {
         for index in 0 ..< self.timelineArray.count {
             
-            if self.currentTime >= self.timelineArray[index].0 && self.currentTime <= self.timelineArray[index].1 {
+            if self.currentTime >= self.timelineArray[index].0
+                &&
+                self.currentTime <= self.timelineArray[index].1
+                &&
+                GlobalMusicProperties.bracketsSelectedTime.contains(self.currentTime) == true {
                 
                 return index
             }

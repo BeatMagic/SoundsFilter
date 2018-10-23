@@ -1,9 +1,10 @@
 PODS:
-  - AudioKit (4.4.0):
-    - AudioKit/Core (= 4.4.0)
-    - AudioKit/UI (= 4.4.0)
-  - AudioKit/Core (4.4.0)
-  - AudioKit/UI (4.4.0)
+  - AudioKit (4.5.2):
+    - AudioKit/Core (= 4.5.2)
+    - AudioKit/UI (= 4.5.2)
+  - AudioKit/Core (4.5.2)
+  - AudioKit/UI (4.5.2):
+    - AudioKit/Core
   - ChameleonFramework/Default (2.1.0)
   - ChameleonFramework/Swift (2.1.0):
     - ChameleonFramework/Default
@@ -49,11 +50,11 @@ CHECKOUT OPTIONS:
     :commit: 9e80cc9e4785e9c64a5b0d0cce4cae87f3d5635f
     :git: https://github.com/i-schuetz/SwiftCharts.git
   SwiftyXMLParser:
-    :commit: 8d5c12d0f1109621b6a4a90a30e3ad635d7efc75
+    :commit: 7e930e74ee2e4ccfe5d684d4dc1002fcc99c6e60
     :git: https://github.com/yahoojapan/SwiftyXMLParser.git
 
 SPEC CHECKSUMS:
-  AudioKit: 79c2b23cd00beb656938aa0b81b614391f17eaa3
+  AudioKit: af6770360f1d8b2aed16ce2802dafe69f0e592d0
   ChameleonFramework: d21a3cc247abfe5e37609a283a8238b03575cf64
   HGRippleRadarView: 5379e27634c09222ebc836671c7425ad7b257cc4
   SnapKit: 0de968a9fec17499afa29683b05d0c775b6d1c29

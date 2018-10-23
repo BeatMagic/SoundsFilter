@@ -99,6 +99,9 @@ extension GlobalMusicProperties {
     
     /// 时间线数组
     static var timelineArray: [(Double, Double)] = []
+    
+    /// 括号选定前后时间
+    static var bracketsSelectedTime: ClosedRange<Double> = 0 ... 1
 }
 
 // MARK: - 静态数据

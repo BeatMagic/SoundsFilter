@@ -369,12 +369,13 @@ extension EditViewController {
             })
             
         case .Playing:
+            AudioKitLogger.stopPlayingFile()
+            
             self.recordStatus = .Initial
             self.playButton.setImage(UIImage.init(named: StaticProperties.ImageName.play.rawValue), for: .normal)
             
-            AudioKitLogger.stopPlayingFile()
-            PlayerTimer.destroyTimer()
             self.playProgressBar!.cursorCancelAnimation()
+            PlayerTimer.destroyTimer()
         }
         
         

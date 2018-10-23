@@ -37,6 +37,14 @@ class PlayProgressBar: UIView {
     }
     
     // MARK: - 记录
+    /// 记录括号位置数组
+    private var bracketsLoction: [Double] = [0, 0] {
+        didSet {
+            GlobalMusicProperties.bracketsSelectedTime = bracketsLoction[0] ... bracketsLoction[1]
+            
+        }
+    }
+    
     /// 记录线横坐标的的数组
     private var sectionLineXArray: [CGFloat] = []
     
@@ -191,6 +199,16 @@ extension PlayProgressBar {
         self.cursorView.isHidden = false
     }
     
+    /// 获取左右括号位置
+    func getBracketsLoction() -> [Double] {
+        return self.bracketsLoction
+    }
+    
+    /// 是否解锁括号
+    func lockOrUnlock(_ isUnlocking: Bool) -> Void {
+        self.isUserInteractionEnabled = isUnlocking
+    }
+    
     // MARK: - 工具
     /// 运动
     private func getNearestBrackets(point: CGPoint) -> Void {
@@ -240,12 +258,27 @@ extension PlayProgressBar {
             animations: {
                 self.bracketsViewArray[needMoveBracketsIndex].frame.origin.x = self.sectionLineXArray[nearestLineIndex]
             },
+            
             completion: { (isFinished) in
                 #warning("传值")
+                
+                var result = 0.0
+                
+                if nearestLineIndex >= 1 && nearestLineIndex <= self.sectionLineXArray.count - 2 {
+                    result = Double(nearestLineIndex - 1) * GlobalMusicProperties.getSectionDuration() + GlobalMusicProperties.timeDifferenceFromNowToNextBeat
+                    
+                }else if nearestLineIndex == self.sectionLineXArray.count - 1 {
+                    result = self.totalTime
+                    
+                }
+                
 
+                self.bracketsLoction[needMoveBracketsIndex] = result
+                
             }
         )
         
+
     }
 
     
