@@ -64,12 +64,12 @@ extension PlayerTimer {
                     if self.isNeedTuning() != nil && isAllowShift == true { // 需要调音
                         
                         isAllowShift = false
-                        AudioKitLogger.setPitchShifter(shift: self.adjustIndexArray[self.isNeedTuning()!] + 1)
+                        AudioKitLogger.setPitchShifter(shift: self.adjustIndexArray[self.isNeedTuning()!])
                         
                     }else if self.isNeedTuning() == nil  { // 不需要调
                         
                         isAllowShift = true
-                        AudioKitLogger.setPitchShifter(shift: 1)
+                        AudioKitLogger.setPitchShifter(shift: 0)
                         
                     }else { // 在区间内但不调音
                         

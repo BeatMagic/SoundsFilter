@@ -27,7 +27,7 @@ class AudioKitLogger: NSObject {
     }()
     
     /// 跟踪器
-    static private let tracker: AKFrequencyTracker = AKFrequencyTracker.init(mic, peakCount: 3)
+    static private let tracker: AKFrequencyTracker = AKFrequencyTracker.init(mic, peakCount: 4)
     
     static private let silence = AKBooster(tracker, gain: 0)
     
@@ -45,7 +45,7 @@ class AudioKitLogger: NSObject {
     static private var tape: AKAudioFile?
     
     /// 播放器
-    static var player: AKPlayer?
+    static private var player: AKPlayer?
     
     /// 主混合器
     static private var mainMixer: AKMixer?
@@ -99,8 +99,11 @@ extension AudioKitLogger {
             
             self.playMixer.connect(input: pitchShifter)
             
-            self.mainMixer = AKMixer(micBooster, silence)
+            let moogLadder = AKMoogLadder.init(self.playMixer, cutoffFrequency: 5000
+                , resonance: 0.5)
             
+            self.mainMixer = AKMixer(micBooster, silence, moogLadder)
+
             AudioKit.output = mainMixer!
             
             
@@ -234,8 +237,6 @@ extension AudioKitLogger {
     
     /// 播放录制好的文件
     static func playFile(action: @escaping (() -> Void)) -> Void {
-
-        AudioKit.output = playMixer
         
         finalSequencer!.play()
         
@@ -308,7 +309,6 @@ extension AudioKitLogger {
             let temp = AKSequencer.init()
             temp.loadMIDIFile(chordName)
             
-            print(lastClipBeats)
             let tempTracks = temp.tracks
             let tracks = finalSequencer!.tracks
             assert(tempTracks.count==tracks.count)
@@ -330,13 +330,13 @@ extension AudioKitLogger {
             
         }
         
-        for t in finalSequencer!.tracks{
-            print("track==========================================")
-            for nt in t.getMIDINoteData(){
-                print(nt)
-            }
-        }
-        
+//        for t in finalSequencer!.tracks{
+//            print("track==========================================")
+//            for nt in t.getMIDINoteData(){
+//                print(nt)
+//            }
+//        }
+//
       
     }// funcEnd
     

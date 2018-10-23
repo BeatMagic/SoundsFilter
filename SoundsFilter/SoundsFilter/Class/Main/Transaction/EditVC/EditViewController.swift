@@ -126,6 +126,8 @@ extension EditViewController {
     func setData() -> Void {
         self.finalNoteArray = self.processFrequencyArray()
         
+        
+        
         // 获取近似大调
         let majorName = GlobalMusicProperties.getApproximateMajor(noteModelArray: self.finalNoteArray)
         
