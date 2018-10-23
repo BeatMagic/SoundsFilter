@@ -38,7 +38,7 @@ class PlayProgressBar: UIView {
     
     // MARK: - 记录
     /// 记录括号位置数组
-    private var bracketsLoction: [Double] = [0, 0] {
+    private var bracketsLoction: [Double] = [0, GlobalMusicProperties.timeDifferenceFromNowToNextBeat] {
         didSet {
             GlobalMusicProperties.bracketsSelectedTime = bracketsLoction[0] ... bracketsLoction[1]
             
@@ -260,8 +260,6 @@ extension PlayProgressBar {
             },
             
             completion: { (isFinished) in
-                #warning("传值")
-                
                 var result = 0.0
                 
                 if nearestLineIndex >= 1 && nearestLineIndex <= self.sectionLineXArray.count - 2 {

@@ -270,20 +270,23 @@ extension AudioKitLogger {
     static func initializeSequencer(finalChordNameArray: [String]) -> Void {
         self.finalSequencer = AKSequencer.init()
         
-        let array = [50, 4, 33, 5, 108, 90, 101, 9]
+        let toneNumArray = [50, 4, 33, 5, 108, 90, 101, 9]
+        let volumeArray = [0, 0.95, 0.97, 0.95, 0.15, 0.45, 0.20, 0.25]
         
-        for index in 0 ..< array.count {
+        
+        
+        for index in 0 ..< toneNumArray.count {
             
             let sampler = AKMIDISampler()
             
             if index == 1 {
-                try! sampler.loadMelodicSoundFont("TR-808Drums", preset: array[index])
+                try! sampler.loadMelodicSoundFont("TR-808Drums", preset: toneNumArray[index])
                 
             }else {
-                try! sampler.loadMelodicSoundFont("GeneralUser", preset: array[index])
+                try! sampler.loadMelodicSoundFont("GeneralUser", preset: toneNumArray[index])
                 
             }
-            
+            sampler.volume = volumeArray[index]
             
             
             _ = finalSequencer!.newTrack()
