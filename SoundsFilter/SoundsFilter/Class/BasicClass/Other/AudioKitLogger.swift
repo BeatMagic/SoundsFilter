@@ -284,7 +284,7 @@ extension AudioKitLogger {
             let sampler = AKMIDISampler()
             
             if index == 1 {
-                try! sampler.loadMelodicSoundFont("GeneralUserPiano", preset: toneNumArray[index])
+                try! sampler.loadMelodicSoundFont("FullGrandPiano", preset: toneNumArray[index])
                 
                 
             }else {

@@ -50,7 +50,7 @@
 		7C56D8A2217F92C5001A5834 /* C#7_1.mid in Resources */ = {isa = PBXBuildFile; fileRef = 7C56D87D217F92C5001A5834 /* C#7_1.mid */; };
 		7C56D8A3217F92C5001A5834 /* G7_1.mid in Resources */ = {isa = PBXBuildFile; fileRef = 7C56D87F217F92C5001A5834 /* G7_1.mid */; };
 		7C56D8A7217FACFF001A5834 /* GeneralUser.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 7C56D8A6217FACFF001A5834 /* GeneralUser.sf2 */; };
-		7C56D8A9217FAD10001A5834 /* GeneralUserPiano.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 7C56D8A8217FAD10001A5834 /* GeneralUserPiano.sf2 */; };
+		7C56D8AB21805CCD001A5834 /* FullGrandPiano.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 7C56D8AA21805CCD001A5834 /* FullGrandPiano.sf2 */; };
 		7CAE74CB21703B03004395A2 /* MusicConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CAE74CA21703B03004395A2 /* MusicConverter.swift */; };
 		7CBADEB82174A673005B2F0D /* AboutPitchFrequenc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CBADEB72174A673005B2F0D /* AboutPitchFrequenc.swift */; };
 		7CBADEBA2174C380005B2F0D /* EquationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CBADEB92174C380005B2F0D /* EquationView.swift */; };
@@ -120,7 +120,7 @@
 		7C56D87D217F92C5001A5834 /* C#7_1.mid */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = "C#7_1.mid"; sourceTree = "<group>"; };
 		7C56D87F217F92C5001A5834 /* G7_1.mid */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = G7_1.mid; sourceTree = "<group>"; };
 		7C56D8A6217FACFF001A5834 /* GeneralUser.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = GeneralUser.sf2; sourceTree = "<group>"; };
-		7C56D8A8217FAD10001A5834 /* GeneralUserPiano.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = GeneralUserPiano.sf2; sourceTree = "<group>"; };
+		7C56D8AA21805CCD001A5834 /* FullGrandPiano.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = FullGrandPiano.sf2; sourceTree = "<group>"; };
 		7CAE74CA21703B03004395A2 /* MusicConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicConverter.swift; sourceTree = "<group>"; };
 		7CBADEB72174A673005B2F0D /* AboutPitchFrequenc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutPitchFrequenc.swift; sourceTree = "<group>"; };
 		7CBADEB92174C380005B2F0D /* EquationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EquationView.swift; sourceTree = "<group>"; };
@@ -690,8 +690,8 @@
 				7C1B6A402175C36A00B0472C /* ExamplesDefaults.swift */,
 				7CFB8D73216DA3AD006A6365 /* Assets.xcassets */,
 				7CF042BA2171CBBF0076D44B /* beatSound.mp3 */,
+				7C56D8AA21805CCD001A5834 /* FullGrandPiano.sf2 */,
 				7C56D8A6217FACFF001A5834 /* GeneralUser.sf2 */,
-				7C56D8A8217FAD10001A5834 /* GeneralUserPiano.sf2 */,
 				7C56D834217F92C5001A5834 /* 钢琴分解_80-140_n=1 */,
 			);
 			name = Resource;
@@ -797,10 +797,10 @@
 				7CF042BB2171CBBF0076D44B /* beatSound.mp3 in Resources */,
 				7CFB8D77216DA3AD006A6365 /* LaunchScreen.storyboard in Resources */,
 				7C56D8A0217F92C5001A5834 /* C7_1.mid in Resources */,
-				7C56D8A9217FAD10001A5834 /* GeneralUserPiano.sf2 in Resources */,
 				7C56D886217F92C5001A5834 /* Bm_1.mid in Resources */,
 				7C56D89A217F92C5001A5834 /* F7_1.mid in Resources */,
 				7C56D890217F92C5001A5834 /* A_1.mid in Resources */,
+				7C56D8AB21805CCD001A5834 /* FullGrandPiano.sf2 in Resources */,
 				7C56D88D217F92C5001A5834 /* D#_1.mid in Resources */,
 				7C56D8A7217FACFF001A5834 /* GeneralUser.sf2 in Resources */,
 				7C56D896217F92C5001A5834 /* E_1.mid in Resources */,
