@@ -27,7 +27,7 @@ class AudioKitLogger: NSObject {
     }()
     
     /// 跟踪器
-    static private let tracker: AKFrequencyTracker = AKFrequencyTracker.init(mic, peakCount: 4)
+    static private let tracker: AKFrequencyTracker = AKFrequencyTracker.init(mic, peakCount: 2)
     
     static private let silence = AKBooster(tracker, gain: 0)
     
@@ -275,7 +275,7 @@ extension AudioKitLogger {
         self.samplerMixer = AKMixer.init()
         
         let toneNumArray = [50, 0, 89]
-        let amplitudeArray = [-90, -12.9, -21.3]
+        let amplitudeArray = [-90, -1.5, -21.3]
         
         
         
@@ -291,8 +291,6 @@ extension AudioKitLogger {
                 try! sampler.loadMelodicSoundFont("GeneralUser", preset: toneNumArray[index])
                 
             }
-            
-            
             
             sampler.amplitude = amplitudeArray[index]
             

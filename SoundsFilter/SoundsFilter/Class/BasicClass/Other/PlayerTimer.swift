@@ -61,6 +61,20 @@ extension PlayerTimer {
                 
                 // 第一次不触发要做的事
                 if self.repeatCount != 0 {
+                    
+                    let delay = GlobalMusicProperties.getSectionDuration() - GlobalMusicProperties.timeDifferenceFromNowToNextBeat
+                    
+                    if let bracketsSelectedTime = GlobalMusicProperties.bracketsSelectedTime {
+                        
+                        if bracketsSelectedTime.contains(self.currentTime - delay) == true {
+                            AudioKitLogger.samplerMixer!.volume = 1.0
+                            
+                        }else {
+                            AudioKitLogger.samplerMixer!.volume = 0
+                            
+                        }
+                    }
+                    
                     self.currentTime += timeInterval
                     
                     if self.isNeedTuning() != nil && isAllowShift == true { // 需要调音
@@ -78,18 +92,7 @@ extension PlayerTimer {
                         
                     }
 
-                    let delay = GlobalMusicProperties.getSectionDuration() - GlobalMusicProperties.timeDifferenceFromNowToNextBeat
-                    
-                    if let bracketsSelectedTime = GlobalMusicProperties.bracketsSelectedTime {
-                        
-                        if bracketsSelectedTime.contains(self.currentTime - delay) == true {
-                            AudioKitLogger.samplerMixer!.volume = 1.0
-                            
-                        }else {
-                            AudioKitLogger.samplerMixer!.volume = 0
-                            
-                        }
-                    }
+
                 }
                 
                 self.repeatCount += 1

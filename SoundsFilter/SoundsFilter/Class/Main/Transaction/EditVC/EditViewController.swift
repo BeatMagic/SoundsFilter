@@ -27,6 +27,7 @@ class EditViewController: UIViewController {
     /// 和弦数组
     private var finalChordNameArray: [String] = []
     
+    
 // MARK: - UI
     /// 进度条
     private var playProgressBar: PlayProgressBar? {
@@ -138,9 +139,31 @@ class EditViewController: UIViewController {
 // MARK: - 设置函数封装
 extension EditViewController {
     func setData() -> Void {
+
+        
+    }
+    
+    func setUI() -> Void {
+        self.navigationItem.leftBarButtonItem = self.backButtonItem
+        self.playButton.tag = 1
+        
+        
+        
+    }
+    
+    /// 计算选中小节大调并存储
+    func matchSelectSectionsMajor() -> Void {
+        print("计算选中小节大调并存储")
+        
+        self.finalNoteArray = []
+        self.firstFrequencyModelArray = []
+        GlobalMusicProperties.frequencyModelArray = []
+        
         self.finalNoteArray = self.processFrequencyArray()
         // 第一步提纯
         self.firstFrequencyModelArray = MusicConverter.purifyFrequencyModel(frequencyArray: GlobalMusicProperties.recordFrequencyArray)
+        
+       
         
         for finalNote in self.finalNoteArray {
             let startTime = finalNote.startTime
@@ -163,19 +186,6 @@ extension EditViewController {
             
         }
         
-    }
-    
-    func setUI() -> Void {
-        self.navigationItem.leftBarButtonItem = self.backButtonItem
-        self.playButton.tag = 1
-        
-        
-        
-    }
-    
-    /// 计算选中小节大调并存储
-    func matchSelectSectionsMajor() -> Void {
-        print("计算选中小节大调并存储")
         
         if let bracketsSelectedTime = GlobalMusicProperties.bracketsSelectedTime {
             
@@ -189,7 +199,8 @@ extension EditViewController {
                 
                 let finalNoteModel = self.finalNoteArray[index]
                 
-                if bracketsSelectedTime.contains(finalNoteModel.getEndTime()) {
+                if bracketsSelectedTime.contains(finalNoteModel.getEndTime())
+                    && GlobalMusicProperties.NoteNamesWithSharps.contains(finalNoteModel.pitchName) == false {
                     selecetNoteArray.append(finalNoteModel)
                     
                 }
@@ -257,8 +268,7 @@ extension EditViewController {
                         }
                         
                     }
-                    
-                    
+
                 }
                 
             })
@@ -268,7 +278,7 @@ extension EditViewController {
                 GlobalMusicProperties.adjustIndexArray = adjustIndexArray
                 GlobalMusicProperties.timelineArray = timelineArray
                 
-                self.finalNoteArray = finalPitchNoteArray
+//                self.finalNoteArray = finalPitchNoteArray
                 self.majorName = thisTimeMajorName
                 
                 let preliminaryChordNameArray = GlobalMusicProperties.getChordFrom(majorName: self.majorName, noteModelArray: finalPitchNoteArray)
