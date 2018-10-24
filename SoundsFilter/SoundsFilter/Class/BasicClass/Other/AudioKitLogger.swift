@@ -273,7 +273,7 @@ extension AudioKitLogger {
     static func initializeSequencer(finalChordNameArray: [String]) -> Void {
         self.finalSequencer = AKSequencer.init()
         self.samplerMixer = AKMixer.init()
-        
+
         let toneNumArray = [50, 0, 89]
         let amplitudeArray = [-90, -1.5, -21.3]
         
@@ -285,11 +285,11 @@ extension AudioKitLogger {
             
             if index == 1 {
                 try! sampler.loadMelodicSoundFont("FullGrandPiano", preset: toneNumArray[index])
-                
-                
+
+
             }else {
                 try! sampler.loadMelodicSoundFont("GeneralUser", preset: toneNumArray[index])
-                
+
             }
             
             sampler.amplitude = amplitudeArray[index]
@@ -298,11 +298,10 @@ extension AudioKitLogger {
             _ = finalSequencer!.newTrack()
             finalSequencer!.tracks[index].setMIDIOutput(sampler.midiIn)
             
-            
             self.samplerMixer!.connect(input: sampler)
             
             self.midiSamplerArray.append(sampler)
-            
+
         }
         
         
@@ -326,6 +325,11 @@ extension AudioKitLogger {
                 let noteDataArray = tempTracks[trackIndex].getMIDINoteData()
                 
                 for noteData in noteDataArray {
+                    if noteData.duration == AKDuration.init(beats: 0.0) {
+                        continue
+                        
+                    }
+
                     var setNoteData = noteData
                     let oldBeat = noteData.position.beats
                     let newBeat = oldBeat + lastClipBeats
@@ -344,7 +348,6 @@ extension AudioKitLogger {
 //                print(nt)
 //            }
 //        }
-//
       
     }// funcEnd
     
