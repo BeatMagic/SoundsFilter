@@ -29,6 +29,12 @@ class EditViewController: UIViewController {
     
     
 // MARK: - UI
+    @IBOutlet var effectiveNoteLabel: UILabel!
+    
+    @IBOutlet var majorLabel: UILabel!
+    
+    @IBOutlet var sectionChordLabel: UILabel!
+    
     /// 进度条
     private var playProgressBar: PlayProgressBar? {
         didSet {
@@ -160,6 +166,25 @@ extension EditViewController {
         GlobalMusicProperties.frequencyModelArray = []
         
         self.finalNoteArray = self.processFrequencyArray()
+        
+        #warning("测试")
+        DispatchQueue.main.async {
+            var text = ""
+            
+            for noteModel in self.finalNoteArray {
+                text += noteModel.pitchName
+                text += ","
+            }
+            
+            self.effectiveNoteLabel.text = text
+            
+        }
+        #warning("测试结束")
+        
+        
+        
+        
+        
         // 第一步提纯
         self.firstFrequencyModelArray = MusicConverter.purifyFrequencyModel(frequencyArray: GlobalMusicProperties.recordFrequencyArray)
         
@@ -210,6 +235,16 @@ extension EditViewController {
             
             // 获取近似大调
             let thisTimeMajorName = GlobalMusicProperties.getApproximateMajor(noteModelArray: selecetNoteArray)
+            
+            #warning("测试")
+            DispatchQueue.main.async {
+                self.majorLabel.text = thisTimeMajorName
+                
+            }
+            
+            #warning("测试结束")
+            
+            
             
             
             let frequencyModelArrayWithTime = GlobalMusicProperties.frequencyModelArray
@@ -296,6 +331,21 @@ extension EditViewController {
                 
                 self.finalChordNameArray = finalChordNameArray
                 
+                
+                #warning("测试")
+                DispatchQueue.main.async {
+                    var testText = ""
+                    
+                    for finalChordName in self.finalChordNameArray {
+                        testText += "\(finalChordName), "
+                        
+                    }
+                    
+                    self.sectionChordLabel.text = testText
+                    
+                }
+                
+                #warning("测试结束")
             }
         }
         

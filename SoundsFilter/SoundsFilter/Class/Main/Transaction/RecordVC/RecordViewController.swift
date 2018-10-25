@@ -11,6 +11,7 @@ import ChameleonFramework
 import SVProgressHUD
 
 class RecordViewController: UIViewController {
+    
     // MARK: - 状态属性
     /// 是否在记录中
     var recordStatus: StaticProperties.RecordVCStatus = .Initial
@@ -23,6 +24,10 @@ class RecordViewController: UIViewController {
 
     
     // MARK: - UI
+    
+    @IBOutlet var frequencyLabel: UILabel!
+    
+    @IBOutlet var noteLabel: UILabel!
     /// 调整BPM按钮
     private lazy var changeBPMButton: SizeSlideButton = {
         let sideLength = FrameStandard.genericButtonSideLength / 2
@@ -275,6 +280,19 @@ extension RecordViewController: TimerDelegate {
     func doThingsWhenTiming() {
         GlobalMusicProperties.recordFrequencyArray.append(AudioKitLogger.getRealtimeNote())
         
+        DispatchQueue.main.async {
+
+            if let frequency = AudioKitLogger.getRealtimeNote() {
+                self.frequencyLabel.text = String(frequency)
+                self.noteLabel.text = "\(MusicConverter.getApproximatePitch(frequency: frequency))"
+                
+            }else {
+                self.frequencyLabel.text = "nil"
+                self.noteLabel.text = "nil"
+                
+            }
+        }
+
     }
     
     func doThingsWhenEnd() {

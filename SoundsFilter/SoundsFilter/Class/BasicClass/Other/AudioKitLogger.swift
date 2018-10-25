@@ -27,7 +27,7 @@ class AudioKitLogger: NSObject {
     }()
     
     /// 跟踪器
-    static private let tracker: AKFrequencyTracker = AKFrequencyTracker.init(mic, peakCount: 2)
+    static private let tracker: AKFrequencyTracker = AKFrequencyTracker.init(mic, hopSize: 2048, peakCount: 20)
     
     static private let silence = AKBooster(tracker, gain: 0)
     
@@ -90,13 +90,12 @@ extension AudioKitLogger {
             
             self.pitchShifter = AKPitchShifter.init(self.player!)
             self.pitchShifter!.rampDuration = 0
+            let moogLadder = AKMoogLadder.init(self.pitchShifter, cutoffFrequency: 20000
+                , resonance: 0.01)
             
-            self.playMixer.connect(input: pitchShifter)
+            self.playMixer.connect(input: moogLadder)
             
-            let moogLadder = AKMoogLadder.init(self.playMixer, cutoffFrequency: 5000
-                , resonance: 0.5)
-            
-            self.mainMixer = AKMixer(silence, moogLadder)
+            self.mainMixer = AKMixer(silence, playMixer)
 
             AudioKit.output = mainMixer!
             
@@ -285,11 +284,12 @@ extension AudioKitLogger {
             
             if index == 1 {
                 try! sampler.loadMelodicSoundFont("FullGrandPiano", preset: toneNumArray[index])
+                sampler.pan = 0.1
 
 
             }else {
                 try! sampler.loadMelodicSoundFont("GeneralUser", preset: toneNumArray[index])
-
+                sampler.pan = -0.1
             }
             
             sampler.amplitude = amplitudeArray[index]
