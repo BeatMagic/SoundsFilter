@@ -90,10 +90,16 @@ extension AudioKitLogger {
             
             self.pitchShifter = AKPitchShifter.init(self.player!)
             self.pitchShifter!.rampDuration = 0
-            let moogLadder = AKMoogLadder.init(self.pitchShifter, cutoffFrequency: 20000
+            
+            let reverb = AKReverb.init(self.pitchShifter, dryWetMix: 0.22)
+            reverb.loadFactoryPreset(.largeHall)
+            
+            let moogLadder = AKMoogLadder.init(reverb, cutoffFrequency: 12000
                 , resonance: 0.01)
             
+            
             self.playMixer.connect(input: moogLadder)
+            
             
             self.mainMixer = AKMixer(silence, playMixer)
 
@@ -236,15 +242,20 @@ extension AudioKitLogger {
     static func playFile(action: @escaping (() -> Void)) -> Void {
         PlayerTimer.initializeTimer()
         AudioKitLogger.samplerMixer!.volume = 0
-        self.finalSequencer!.play()
         
         let delayTime = GlobalMusicProperties.getSectionDuration() - GlobalMusicProperties.timeDifferenceFromNowToNextBeat
-        
+        self.finalSequencer!.play()
         DelayTask.createTaskWith(workItem: {
+            self.player?.volume = 0.8
             self.player!.play()
             action()
             
         }, delayTime: delayTime)
+        
+        
+        
+        
+        
         
     }
     
@@ -284,12 +295,12 @@ extension AudioKitLogger {
             
             if index == 1 {
                 try! sampler.loadMelodicSoundFont("FullGrandPiano", preset: toneNumArray[index])
-                sampler.pan = 0.1
+                sampler.pan = 1
 
 
             }else {
                 try! sampler.loadMelodicSoundFont("GeneralUser", preset: toneNumArray[index])
-                sampler.pan = -0.1
+                sampler.pan = -1
             }
             
             sampler.amplitude = amplitudeArray[index]

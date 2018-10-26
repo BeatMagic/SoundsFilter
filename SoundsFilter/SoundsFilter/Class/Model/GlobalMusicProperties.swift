@@ -240,7 +240,7 @@ extension GlobalMusicProperties {
     
     
     /// 给定大调与任意音名 获取与大调内最近音名
-    static func getNearestMajorPitch(majorName: String, pitchName: String) -> String {
+    static func getNearestMajorPitch(majorName: String, pitchName: String, average: Double) -> String {
         
         let majorPitchArray = MajorPitchDict[majorName]!
         
@@ -252,40 +252,85 @@ extension GlobalMusicProperties {
             return pitchName
             
         }else {
-            var majorFrequencyArray: [Double] = []
+            
+            var tmpStringArray: [String] = []
+            var tmpArrayY: [Double] = []
             
             for majorPitch in majorPitchArray {
-                let baseFrequency = MusicConverter.getFrequencyFrom(pitchName: "\(majorPitch)0")
-                majorFrequencyArray.append(baseFrequency)
+                let tmpString = majorPitch + "\(octaveCount)"
+                tmpStringArray.append(tmpString)
+                
             }
             
-            majorFrequencyArray.append(majorFrequencyArray.first! * 2)
+            tmpStringArray.append(majorPitchArray.first! + "\(octaveCount + 1)")
             
-            let scaleFrequency = MusicConverter.getFrequencyFrom(pitchName: "\(scale)0")
+            for tmpPitch in tmpStringArray {
+                let tmpPitchF = MusicConverter.getFrequencyFrom(pitchName: tmpPitch)
+                let tmpPitchFY = MusicConverter.getFrameY(frequency: tmpPitchF)
+                
+                tmpArrayY.append(tmpPitchFY)
+            }
+            
             
             var nearestFrequencyDifference = 1000.0
             var nearestIndex = 0
             
-            for index in 0 ..< majorFrequencyArray.count {
-                let majorFrequency = majorFrequencyArray[index]
+            for index in 0 ..< tmpArrayY.count {
+                let tmpY = tmpArrayY[index]
                 
-                if fabs(scaleFrequency - majorFrequency) <= nearestFrequencyDifference {
-                    nearestFrequencyDifference = fabs(scaleFrequency - majorFrequency)
+                let difference = fabs(tmpY - average)
+                
+                
+                if difference <= nearestFrequencyDifference {
+                    nearestFrequencyDifference = difference
                     nearestIndex = index
-                    
                 }
+                
             }
             
-            if nearestIndex >= majorPitchArray.count {
-                return "\(majorPitchArray[nearestIndex])\(octaveCount + 1)"
-                
-            }else {
-                
-                return "\(majorPitchArray[nearestIndex])\(octaveCount)"
-            }
-            
+            return tmpStringArray[nearestIndex]
             
         }
+            
+//            var majorFrequencyArray: [Double] = []
+//
+//
+//
+//            for index in 0 ..< majorPitchArray.count {
+//                let majorPitch = majorPitchArray[index]
+//
+//                let baseFrequency = MusicConverter.getFrequencyFrom(pitchName: "\(majorPitch)0")
+//
+//                majorFrequencyArray.append(baseFrequency)
+//            }
+//
+//            majorFrequencyArray.append(majorFrequencyArray.first! * 2)
+//
+//            let scaleFrequency = MusicConverter.getFrequencyFrom(pitchName: "\(scale)0")
+//
+//            var nearestFrequencyDifference = 1000.0
+//            var nearestIndex = 0
+//
+//            for index in 0 ..< majorFrequencyArray.count {
+//                let majorFrequency = majorFrequencyArray[index]
+//
+//                if fabs(scaleFrequency - majorFrequency) <= nearestFrequencyDifference {
+//                    nearestFrequencyDifference = fabs(scaleFrequency - majorFrequency)
+//                    nearestIndex = index
+//
+//                }
+//            }
+//
+//            if nearestIndex >= majorPitchArray.count {
+//                return "\(majorPitchArray[nearestIndex])\(octaveCount + 1)"
+//
+//            }else {
+//
+//                return "\(majorPitchArray[nearestIndex])\(octaveCount)"
+//            }
+            
+            
+        
         
         
         
@@ -399,6 +444,10 @@ extension GlobalMusicProperties {
         }
     }// funcEnd
     
+    static var tmpModelSectionArray: [[NoteModel]] = []
+    
+    static var tmpTimelineArray: [Double] = []
+    
     /// 通过NoteArry获取和弦序列
     static func getChordFrom(majorName: String, noteModelArray: [NoteModel]) -> [String] {
         
@@ -406,18 +455,44 @@ extension GlobalMusicProperties {
         let sectionTime = getSectionDuration()
         let sectionCount = 1 + Int((totalTime - timeDifferenceFromNowToNextBeat) / sectionTime) + 1
         
-        let delayTime = getSectionDuration() - timeDifferenceFromNowToNextBeat
+        let delayTime = timeDifferenceFromNowToNextBeat
         
         var noteModelSectionArray: [[NoteModel]] = []
+        var timeArray: [Double] = []
+        
         
         for index in 0 ..< sectionCount {
             var tmpModelArray: [NoteModel] = []
             
-            for noteModel in noteModelArray {
+            let startTime: Double = {
+                if index == 0 {
+                    return 0
+                    
+                }else {
+                    return Double(index - 1) * sectionTime + delayTime
+                    
+                }
                 
-                if noteModel.startTime + delayTime >= Double(index) * sectionTime
+            }()
+            
+            let endTime: Double = {
+                if index == 0 {
+                    return delayTime
+                    
+                }else {
+                    return Double(index) * sectionTime + delayTime
+                    
+                }
+                
+            }()
+            
+            timeArray.append(endTime)
+            
+            for noteModel in noteModelArray {
+
+                if noteModel.startTime >= startTime
                     &&
-                    noteModel.getEndTime() + delayTime <= Double(index + 1) * sectionTime {
+                    noteModel.getEndTime() <= endTime {
                     
                     tmpModelArray.append(noteModel)
                     
@@ -428,6 +503,10 @@ extension GlobalMusicProperties {
             noteModelSectionArray.append(tmpModelArray)
             
         }
+        
+        
+        self.tmpModelSectionArray = noteModelSectionArray
+        self.tmpTimelineArray = timeArray
         
         let majorUnknownChordModel: MajorUnknownChordModel! = {
             for majorChord in AllMajorChordArray {
@@ -441,6 +520,7 @@ extension GlobalMusicProperties {
             return nil
             
         }()
+        
         
         var resultArray: [String] = []
         for modelSectionArray in noteModelSectionArray {

@@ -48,7 +48,7 @@ extension PlayerTimer {
             self.timelineArray = GlobalMusicProperties.timelineArray
             self.adjustIndexArray = GlobalMusicProperties.adjustIndexArray
 
-            let timeInterval = GlobalMusicProperties.getDetectFrequencyDuration() / 20
+            let timeInterval = GlobalMusicProperties.getDetectFrequencyDuration() / 10
             
             let tmpTimer = DispatchSource.makeTimerSource()
             tmpTimer.schedule(deadline: DispatchTime.now(),
