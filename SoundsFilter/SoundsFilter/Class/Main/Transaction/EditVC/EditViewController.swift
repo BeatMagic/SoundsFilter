@@ -282,20 +282,6 @@ extension EditViewController {
                                     duration: selecetNote.duration
                                 ))
                             
-//                            for index in 0 ..< finalPitchNoteArray.count - 1 {
-//
-//                                let finalPitchNote = finalPitchNoteArray[index]
-//
-//
-//                                if finalPitchNote.duration == finalPitchNoteArray.last!.duration
-//
-//                                    && finalPitchNote.pitchName == finalPitchNoteArray.last!.pitchName
-//
-//                                    && finalPitchNote.startTime == finalPitchNoteArray.last!.startTime {
-//                                    finalPitchNoteArray.removeLast()
-//
-//                                }
-//                            }
                             
                             let finalPitchNameIndex = GlobalMusicProperties.getPitchIndex(pitchName: finalPitchName)
                             
@@ -304,17 +290,15 @@ extension EditViewController {
                                 let standardFrequency = MusicConverter.getFrequencyFrom(pitchName: finalPitch)
                                 var adjustIndex = MusicConverter.getFrameY(frequency: standardFrequency) - average
                                 
-                                if fabs(adjustIndex) >= 1 {
+                                if fabs(adjustIndex) > 1 {
                                     if adjustIndex <= -1 {
                                         adjustIndex += 2
-                                        
+
                                     }else {
                                         adjustIndex -= 2
-                                        
+
                                     }
-                                    
-                                    
-                                    
+
                                 }
                                 
                                 adjustIndexArray.append(adjustIndex)

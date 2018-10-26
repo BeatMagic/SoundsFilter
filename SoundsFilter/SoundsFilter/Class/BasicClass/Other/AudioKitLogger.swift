@@ -91,7 +91,7 @@ extension AudioKitLogger {
             self.pitchShifter = AKPitchShifter.init(self.player!)
             self.pitchShifter!.rampDuration = 0
             
-            let reverb = AKReverb.init(self.pitchShifter, dryWetMix: 0.22)
+            let reverb = AKReverb.init(self.pitchShifter, dryWetMix: 0.13)
             reverb.loadFactoryPreset(.largeHall)
             
             let moogLadder = AKMoogLadder.init(reverb, cutoffFrequency: 12000
@@ -251,12 +251,7 @@ extension AudioKitLogger {
             action()
             
         }, delayTime: delayTime)
-        
-        
-        
-        
-        
-        
+
     }
     
     /// 停止播放

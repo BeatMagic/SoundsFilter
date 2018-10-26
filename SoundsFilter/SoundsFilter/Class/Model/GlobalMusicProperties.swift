@@ -291,49 +291,6 @@ extension GlobalMusicProperties {
             return tmpStringArray[nearestIndex]
             
         }
-            
-//            var majorFrequencyArray: [Double] = []
-//
-//
-//
-//            for index in 0 ..< majorPitchArray.count {
-//                let majorPitch = majorPitchArray[index]
-//
-//                let baseFrequency = MusicConverter.getFrequencyFrom(pitchName: "\(majorPitch)0")
-//
-//                majorFrequencyArray.append(baseFrequency)
-//            }
-//
-//            majorFrequencyArray.append(majorFrequencyArray.first! * 2)
-//
-//            let scaleFrequency = MusicConverter.getFrequencyFrom(pitchName: "\(scale)0")
-//
-//            var nearestFrequencyDifference = 1000.0
-//            var nearestIndex = 0
-//
-//            for index in 0 ..< majorFrequencyArray.count {
-//                let majorFrequency = majorFrequencyArray[index]
-//
-//                if fabs(scaleFrequency - majorFrequency) <= nearestFrequencyDifference {
-//                    nearestFrequencyDifference = fabs(scaleFrequency - majorFrequency)
-//                    nearestIndex = index
-//
-//                }
-//            }
-//
-//            if nearestIndex >= majorPitchArray.count {
-//                return "\(majorPitchArray[nearestIndex])\(octaveCount + 1)"
-//
-//            }else {
-//
-//                return "\(majorPitchArray[nearestIndex])\(octaveCount)"
-//            }
-            
-            
-        
-        
-        
-        
     }// funcEnd
     
     /// 音名 获取该音名的Index
