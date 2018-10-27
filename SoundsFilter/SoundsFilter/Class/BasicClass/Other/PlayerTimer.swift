@@ -80,7 +80,11 @@ extension PlayerTimer {
                     if self.isNeedTuning() != nil && isAllowShift == true { // 需要调音
                         
                         isAllowShift = false
+                        
                         AudioKitLogger.setPitchShifter(shift: self.adjustIndexArray[self.isNeedTuning()!])
+                        
+                        
+                        
                         
                     }else if self.isNeedTuning() == nil  { // 不需要调
                         

@@ -159,7 +159,7 @@ extension EditViewController {
         self.firstFrequencyModelArray = []
         GlobalMusicProperties.frequencyModelArray = []
         
-        let tmpFinalNoteArray =
+//        let tmpFinalNoteArray
         
 
         self.finalNoteArray = self.processFrequencyArray()
@@ -269,49 +269,19 @@ extension EditViewController {
                             // 纵坐标平均数
                             let average = summation / Double(frequencyModelArray.count)
                             
-                            // 近似大调音阶
-                            let finalPitch = GlobalMusicProperties.getNearestMajorPitch(majorName: thisTimeMajorName, pitchName: selecetNote.pitchName, average: average)
-                            
-                            // 近似大调音名
-                            let finalPitchName = ToolClass.cutStringWithPlaces(finalPitch, startPlace: 0, endPlace: finalPitch.count - 1)
-                            
+                            // 需要调音的相关信息
+                            let finalPitchMessage = GlobalMusicProperties.getNearestMajorPitch(majorName: thisTimeMajorName, pitchName: selecetNote.pitchName, average: average)
                                 
                             finalPitchNoteArray.append(NoteModel.init(
-                                    pitchName: finalPitchName,
+                                    pitchName: finalPitchMessage.0,
                                     startTime: selecetNote.startTime,
                                     duration: selecetNote.duration
                                 ))
                             
                             
-                            let finalPitchNameIndex = GlobalMusicProperties.getPitchIndex(pitchName: finalPitchName)
-                            
-                            if finalPitchNameIndex != nil {
-                                
-                                let standardFrequency = MusicConverter.getFrequencyFrom(pitchName: finalPitch)
-                                var adjustIndex = MusicConverter.getFrameY(frequency: standardFrequency) - average
-                                
-                                if fabs(adjustIndex) > 1 {
-                                    if adjustIndex <= -1 {
-                                        adjustIndex += 2
+                            adjustIndexArray.append(finalPitchMessage.1)
+                            timelineArray.append((selecetNote.startTime, selecetNote.getEndTime()))
 
-                                    }else {
-                                        adjustIndex -= 2
-
-                                    }
-
-                                }
-                                
-                                adjustIndexArray.append(adjustIndex)
-                                timelineArray.append((selecetNote.startTime, selecetNote.getEndTime()))
-                            }
-                            
-                            
-
-                            
-                            
-                            
-                            
-                            
                         }
                         
                     }
@@ -414,7 +384,7 @@ extension EditViewController {
                     return delayTime
                     
                 }else if index == sectionCount - 1 {
-                    return totalTime - Double(sectionCount - 2) * sectionTime - delayTime
+                    return totalTime
                     
                 }else {
                     return Double(index) * sectionTime + delayTime

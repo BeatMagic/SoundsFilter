@@ -46,6 +46,20 @@ class MusicConverter: NSObject {
      }// funcEnd
      */
     
+    /// 给定一个音名 返回其在十二音内的Index
+    static func getBase12PitchNameIndex(_ pitchName: String ) -> Int {
+        for index in 0 ..< GlobalMusicProperties.NoteNamesWithSharps.count {
+            let basePitchName = GlobalMusicProperties.NoteNamesWithSharps[index]
+            
+            if pitchName == basePitchName {
+                return index
+            }
+        }
+        
+        return 100
+        
+    }// funcEnd
+    
     
     /// 通过一个音高字符串("C4")获取该音高的频率
     static func getFrequencyFrom(pitchName: String) -> Double {

@@ -269,6 +269,22 @@ extension FileManager{
     
     
 }
+// MARK: - 字符串;
+extension String {
+    func cutWithPlaces(startPlace: Int, endPlace: Int) -> String {
+        if self == "" {
+            return ""
+            
+        }else {
+            let startIndex = self.index(self.startIndex, offsetBy: startPlace)
+            let endIndex = self.index(startIndex, offsetBy: endPlace - startPlace)
+            
+            return String(self[startIndex ..< endIndex])
+        }
+        
+    }
+    
+}
 
 // MARK: - 数字相关
 extension Double {

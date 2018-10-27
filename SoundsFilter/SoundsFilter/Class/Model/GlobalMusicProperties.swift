@@ -239,58 +239,68 @@ extension GlobalMusicProperties {
     }// funcEnd
     
     
-    /// 给定大调与任意音名 获取与大调内最近音名
-    static func getNearestMajorPitch(majorName: String, pitchName: String, average: Double) -> String {
+    /// 给定大调与任意音名 获取与大调内最近音名与需要调整的频率
+    static func getNearestMajorPitch(majorName: String, pitchName: String, average: Double) -> (String, Double) {
         
-        let majorPitchArray = MajorPitchDict[majorName]!
+        // 该大调音名数组
+        let majorPitchNameArray = MajorPitchDict[majorName]!
         
-        let octaveCount = Int(ToolClass.cutStringWithPlaces(pitchName, startPlace: pitchName.count - 1, endPlace: pitchName.count))!
-        let scale = ToolClass.cutStringWithPlaces(pitchName, startPlace: 0, endPlace: pitchName.count - 1)
+        // 八度字符串
+        let octaveCountString = ToolClass.cutStringWithPlaces(pitchName, startPlace: pitchName.count - 1, endPlace: pitchName.count)
+        
+        // 该大调音高数组
+        var needPitchArray: [String] = []
+        
+        // 该大调内最低音名对应十二音的index
+        let majorLowestPitchNameIndex = MusicConverter.getBase12PitchNameIndex(majorPitchNameArray.first!)
+        
+        for majorPitchName in majorPitchNameArray {
+            let majorPitchNameIndex = MusicConverter.getBase12PitchNameIndex(majorPitchName)
+            var needPitch = ""
+            
+            if majorPitchNameIndex >= majorLowestPitchNameIndex {
+                needPitch = majorPitchName + octaveCountString
+                
+            }else {
+                needPitch = majorPitchName + String(Int(octaveCountString)! + 1)
+                
+            }
+            
+            needPitchArray.append(needPitch)
+        }
+        
+        // 该大调音高频率对应半音数组
+        var needPitchFrequencyArray: [Double] = []
+        
+        for pitch in needPitchArray {
+            let pitchF = MusicConverter.getFrequencyFrom(pitchName: pitch)
+            let pitchFY = MusicConverter.getFrameY(frequency: pitchF)
+            
+            needPitchFrequencyArray.append(pitchFY)
+        }
+        
 
         
-        if majorPitchArray.contains(scale) {
-            return pitchName
+        var nearestFrequencyDifference = 1000.0
+        var nearestIndex = 0
+        
+        for index in 0 ..< needPitchFrequencyArray.count {
+            let standardPitchFY = needPitchFrequencyArray[index]
             
-        }else {
+            let difference = fabs(standardPitchFY - average)
             
-            var tmpStringArray: [String] = []
-            var tmpArrayY: [Double] = []
-            
-            for majorPitch in majorPitchArray {
-                let tmpString = majorPitch + "\(octaveCount)"
-                tmpStringArray.append(tmpString)
-                
+            if difference <= nearestFrequencyDifference {
+                nearestFrequencyDifference = difference
+                nearestIndex = index
             }
-            
-            tmpStringArray.append(majorPitchArray.first! + "\(octaveCount + 1)")
-            
-            for tmpPitch in tmpStringArray {
-                let tmpPitchF = MusicConverter.getFrequencyFrom(pitchName: tmpPitch)
-                let tmpPitchFY = MusicConverter.getFrameY(frequency: tmpPitchF)
-                
-                tmpArrayY.append(tmpPitchFY)
-            }
-            
-            
-            var nearestFrequencyDifference = 1000.0
-            var nearestIndex = 0
-            
-            for index in 0 ..< tmpArrayY.count {
-                let tmpY = tmpArrayY[index]
-                
-                let difference = fabs(tmpY - average)
-                
-                
-                if difference <= nearestFrequencyDifference {
-                    nearestFrequencyDifference = difference
-                    nearestIndex = index
-                }
-                
-            }
-            
-            return tmpStringArray[nearestIndex]
             
         }
+        
+        let needShiftTostandardPitch = needPitchArray[nearestIndex]
+        let needShiftSemitoneCount = needPitchFrequencyArray[nearestIndex] - average
+        
+        
+        return (needShiftTostandardPitch, needShiftSemitoneCount)
     }// funcEnd
     
     /// 音名 获取该音名的Index
@@ -436,6 +446,9 @@ extension GlobalMusicProperties {
                 if index == 0 {
                     return delayTime
                     
+                }else if index == sectionCount - 1 {
+                    return totalTime
+                    
                 }else {
                     return Double(index) * sectionTime + delayTime
                     
@@ -491,12 +504,16 @@ extension GlobalMusicProperties {
                 // 每小节的noteModel
                 for noteModel in modelSectionArray {
                     
-                    if chord.chordNoteArray.contains(noteModel.pitchName) == true {
+                    let pitchName = noteModel.pitchName.cutWithPlaces(
+                                        startPlace: 0,
+                                        endPlace: noteModel.pitchName.count - 1
+                                    )
+                    
+                    
+                    if chord.chordNoteArray.contains(pitchName) == true {
                         percentage += noteModel.duration
                         
                     }
-                    
-                    
                 }
                 
                 percentageArray.append(percentage)

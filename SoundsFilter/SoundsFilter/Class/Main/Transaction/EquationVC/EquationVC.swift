@@ -15,7 +15,11 @@ class EquationVC: UIViewController {
         super.viewWillAppear(animated)
         
         var noteString = ""
-        for index in 0 ..< GlobalMusicProperties.tmpModelSectionArray.count {
+        
+        let tmpModelSectionArray = GlobalMusicProperties.tmpModelSectionArray
+        
+        
+        for index in 0 ..< tmpModelSectionArray.count {
             
             let tmpModelSection = GlobalMusicProperties.tmpModelSectionArray[index]
             
