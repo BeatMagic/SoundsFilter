@@ -258,18 +258,24 @@ extension EditViewController {
                     for finalNoteIndex in 0 ..< self.finalNoteArray.count {
                         let frequencyModelArray = frequencyModelArrayWithTime[finalNoteIndex]
                         // 找到对应的频率数组
-                        if selecetNoteIndex == finalNoteIndex {
+                        if selecetNote.startTime == frequencyModelArray.first?.startTime {
                             
                             var summation = 0.0
                             for frequencyModel in frequencyModelArray {
-                                summation += MusicConverter.getFrameY(frequency: frequencyModel.frequency
-                                )
                                 
+                                let approximatePitch = MusicConverter.getApproximatePitch(frequency: frequencyModel.frequency)
+                                
+                                if approximatePitch == selecetNote.pitchName {
+                                    summation += MusicConverter.getFrameY(frequency: frequencyModel.frequency
+                                    )
+                                }
+
                             }
                             // 纵坐标平均数
                             let average = summation / Double(frequencyModelArray.count)
                             
                             // 需要调音的相关信息
+                            
                             let finalPitchMessage = GlobalMusicProperties.getNearestMajorPitch(majorName: thisTimeMajorName, pitchName: selecetNote.pitchName, average: average)
                                 
                             finalPitchNoteArray.append(NoteModel.init(

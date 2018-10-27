@@ -10,12 +10,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SoundsFilter/Class/Model/GlobalMusicProperties.swift"
-            timestampString = "562321720.762935"
+            timestampString = "562326412.074295"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "321"
             endingLineNumber = "321"
             landmarkName = "getNearestMajorPitch(majorName:pitchName:average:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SoundsFilter/Class/Main/Transaction/EditVC/EditViewController.swift"
+            timestampString = "562326481.619454"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "279"
+            endingLineNumber = "279"
+            landmarkName = "matchSelectSectionsMajor()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
