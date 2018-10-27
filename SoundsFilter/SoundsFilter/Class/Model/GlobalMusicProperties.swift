@@ -245,24 +245,43 @@ extension GlobalMusicProperties {
         // 该大调音名数组
         let majorPitchNameArray = MajorPitchDict[majorName]!
         
-        // 八度字符串
-        let octaveCountString = ToolClass.cutStringWithPlaces(pitchName, startPlace: pitchName.count - 1, endPlace: pitchName.count)
+        // 传入原始八度字符串
+        let incomingOctaveCountString = ToolClass.cutStringWithPlaces(pitchName, startPlace: pitchName.count - 1, endPlace: pitchName.count)
+        // 传入音名
+        let incomingPitchName = pitchName.cutWithPlaces(startPlace: 0, endPlace: pitchName.count - 1)
+        
+        // 传入音名对应十二音的index
+        let incomingPitchNameIndex = MusicConverter.getBase12PitchNameIndex(incomingPitchName)
+        
+        // 该大调内最低音名对应十二音的index
+        let majorLowestPitchNameIndex = MusicConverter.getBase12PitchNameIndex(majorPitchNameArray.first!)
+        
+        // 计算后的起始八度
+        var calculatedStartOctaveCountString = ""
+        
+        if incomingPitchNameIndex < majorLowestPitchNameIndex {
+            calculatedStartOctaveCountString = String(Int(incomingOctaveCountString)! - 1)
+            
+        }else {
+            calculatedStartOctaveCountString = incomingOctaveCountString
+            
+        }
+        
         
         // 该大调音高数组
         var needPitchArray: [String] = []
         
-        // 该大调内最低音名对应十二音的index
-        let majorLowestPitchNameIndex = MusicConverter.getBase12PitchNameIndex(majorPitchNameArray.first!)
+       
         
         for majorPitchName in majorPitchNameArray {
             let majorPitchNameIndex = MusicConverter.getBase12PitchNameIndex(majorPitchName)
             var needPitch = ""
             
             if majorPitchNameIndex >= majorLowestPitchNameIndex {
-                needPitch = majorPitchName + octaveCountString
+                needPitch = majorPitchName + calculatedStartOctaveCountString
                 
             }else {
-                needPitch = majorPitchName + String(Int(octaveCountString)! + 1)
+                needPitch = majorPitchName + String(Int(calculatedStartOctaveCountString)! + 1)
                 
             }
             
@@ -297,6 +316,12 @@ extension GlobalMusicProperties {
         }
         
         let needShiftTostandardPitch = needPitchArray[nearestIndex]
+        
+        if needPitchFrequencyArray[nearestIndex] - average >= 1 {
+            print("???")
+            
+        }
+        
         let needShiftSemitoneCount = needPitchFrequencyArray[nearestIndex] - average
         
         
@@ -533,8 +558,8 @@ extension GlobalMusicProperties {
                 }
             }
             
-            
-            resultArray.append(majorUnknownChordModel.chord[maxIndex].chordName)
+            let result = majorUnknownChordModel.chord[maxIndex].chordName
+            resultArray.append(result)
             
 
         }
